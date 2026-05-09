@@ -16,6 +16,7 @@ import { Route as PatientRouteImport } from './routes/patient'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as BookRouteImport } from './routes/book'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
@@ -54,6 +55,11 @@ const BookRoute = BookRouteImport.update({
   path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AdminRoute = AdminRouteImport.update({
   id: '/admin',
   path: '/admin',
@@ -68,6 +74,7 @@ const IndexRoute = IndexRouteImport.update({
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
@@ -79,6 +86,7 @@ export interface FileRoutesByFullPath {
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
@@ -91,6 +99,7 @@ export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
+  '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
@@ -104,6 +113,7 @@ export interface FileRouteTypes {
   fullPaths:
     | '/'
     | '/admin'
+    | '/analytics'
     | '/book'
     | '/doctor'
     | '/login'
@@ -115,6 +125,7 @@ export interface FileRouteTypes {
   to:
     | '/'
     | '/admin'
+    | '/analytics'
     | '/book'
     | '/doctor'
     | '/login'
@@ -126,6 +137,7 @@ export interface FileRouteTypes {
     | '__root__'
     | '/'
     | '/admin'
+    | '/analytics'
     | '/book'
     | '/doctor'
     | '/login'
@@ -138,6 +150,7 @@ export interface FileRouteTypes {
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   BookRoute: typeof BookRoute
   DoctorRoute: typeof DoctorRoute
   LoginRoute: typeof LoginRoute
@@ -198,6 +211,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/admin': {
       id: '/admin'
       path: '/admin'
@@ -218,6 +238,7 @@ declare module '@tanstack/react-router' {
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
+  AnalyticsRoute: AnalyticsRoute,
   BookRoute: BookRoute,
   DoctorRoute: DoctorRoute,
   LoginRoute: LoginRoute,
