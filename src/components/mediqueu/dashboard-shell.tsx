@@ -163,11 +163,13 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
         </header>
 
         <main className="px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mb-6">
-            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">{title}</h1>
-            {subtitle && <p className="mt-1 text-sm text-muted-foreground">{subtitle}</p>}
+          <div className="mb-6 animate-fade-up">
+            <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
+              {title}
+            </h1>
+            {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
           </div>
-          {children}
+          <div className="animate-fade-up delay-75">{children}</div>
         </main>
       </div>
 
@@ -178,14 +180,15 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
 
 export function StatCard({ icon: Icon, label, value, trend }: { icon: any; label: string; value: string; trend?: string }) {
   return (
-    <div className="rounded-2xl border border-border bg-card p-5 card-elevated">
-      <div className="flex items-start justify-between">
+    <div className="group relative overflow-hidden rounded-2xl border border-border bg-card p-5 card-elevated transition-all duration-300 hover:-translate-y-0.5 hover:card-glow">
+      <div className="pointer-events-none absolute -right-10 -top-10 h-32 w-32 rounded-full bg-primary/10 blur-2xl transition-opacity duration-300 group-hover:opacity-80 opacity-50" />
+      <div className="relative flex items-start justify-between">
         <div>
           <div className="text-xs font-medium uppercase tracking-wider text-muted-foreground">{label}</div>
-          <div className="mt-2 text-2xl font-semibold tracking-tight">{value}</div>
+          <div className="mt-2 text-2xl font-semibold tracking-tight sm:text-3xl">{value}</div>
           {trend && <div className="mt-1 text-xs text-success">{trend}</div>}
         </div>
-        <div className="grid h-10 w-10 place-items-center rounded-xl bg-primary-soft text-primary">
+        <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-info/15 text-primary ring-1 ring-primary/15 transition-transform duration-300 group-hover:scale-110">
           <Icon className="h-5 w-5" />
         </div>
       </div>
