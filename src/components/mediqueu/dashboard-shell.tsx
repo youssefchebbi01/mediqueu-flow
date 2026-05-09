@@ -13,7 +13,7 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
-import { getName, getRole, logout, dashboardPath } from "@/lib/role";
+import { useAuth } from "@/hooks/use-auth";
 import { notifications } from "@/lib/mock-data";
 
 type NavItem = { to: string; label: string; icon: any };
@@ -47,24 +47,28 @@ const navByRole: Record<string, NavItem[]> = {
 export function DashboardShell({ children, title, subtitle }: { children: ReactNode; title: string; subtitle?: string }) {
   const navigate = useNavigate();
   const path = useRouterState({ select: (s) => s.location.pathname });
-  const [role, setRoleState] = useState<string>("patient");
-  const [name, setNameState] = useState("Guest");
+  const { user, profile, role: authRole, loading, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(false);
 
   useEffect(() => {
-    const r = getRole();
-    if (!r) { navigate({ to: "/login" }); return; }
-    setRoleState(r);
-    setNameState(getName());
-  }, [navigate]);
+    if (!loading && !user) navigate({ to: "/login" });
+  }, [loading, user, navigate]);
+
+  const role = authRole ?? "patient";
+  const name = profile?.full_name ?? user?.email ?? "Guest";
 
   useEffect(() => {
     document.documentElement.classList.toggle("dark", dark);
   }, [dark]);
 
   const items = navByRole[role] ?? navByRole.patient;
-  const initials = name.split(" ").map((n) => n[0]).slice(0, 2).join("");
+  const initials = name.split(" ").map((n) => n[0]).slice(0, 2).join("").toUpperCase();
+
+  const handleSignOut = async () => {
+    await signOut();
+    navigate({ to: "/login" });
+  };
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -108,7 +112,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
               <div className="truncate text-sm font-medium">{name}</div>
               <div className="truncate text-xs capitalize text-muted-foreground">{role}</div>
             </div>
-            <button onClick={() => { logout(); navigate({ to: "/login" }); }}
+            <button onClick={handleSignOut}
               className="rounded-md p-1.5 text-muted-foreground hover:bg-muted hover:text-foreground" title="Sign out">
               <LogOut className="h-4 w-4" />
             </button>
@@ -157,7 +161,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
               <DropdownMenuLabel>{name}</DropdownMenuLabel>
               <DropdownMenuSeparator />
               <DropdownMenuItem onClick={() => navigate({ to: "/settings" })}><Settings className="mr-2 h-4 w-4" />Settings</DropdownMenuItem>
-              <DropdownMenuItem onClick={() => { logout(); navigate({ to: "/login" }); }}><LogOut className="mr-2 h-4 w-4" />Sign out</DropdownMenuItem>
+              <DropdownMenuItem onClick={handleSignOut}><LogOut className="mr-2 h-4 w-4" />Sign out</DropdownMenuItem>
             </DropdownMenuContent>
           </DropdownMenu>
         </header>
