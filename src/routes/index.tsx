@@ -43,7 +43,7 @@ function Landing() {
   return (
     <div className="min-h-screen bg-background text-foreground">
       {/* Nav */}
-      <header className="sticky top-0 z-40 border-b border-border bg-background/80 backdrop-blur">
+      <header className="sticky top-0 z-40 border-b border-border/60 glass">
         <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 sm:px-6 lg:px-8">
           <Logo />
           <nav className="hidden items-center gap-8 text-sm md:flex">
@@ -61,30 +61,31 @@ function Landing() {
 
       {/* Hero */}
       <section className="relative overflow-hidden">
-        <div className="absolute inset-0 -z-10 gradient-soft opacity-70" />
-        <div className="absolute inset-0 -z-10 bg-grid opacity-40 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+        <div className="absolute inset-0 -z-10 mesh-bg opacity-90" />
+        <div className="absolute inset-0 -z-10 bg-grid opacity-30 [mask-image:radial-gradient(ellipse_at_center,black,transparent_70%)]" />
+        <div className="absolute -top-20 left-1/2 -z-10 h-72 w-[42rem] -translate-x-1/2 rounded-full bg-primary/20 blur-3xl animate-pulse-soft" />
         <div className="mx-auto max-w-7xl px-4 pt-20 pb-24 sm:px-6 lg:px-8 lg:pt-28">
-          <div className="mx-auto max-w-3xl text-center">
-            <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card px-3 py-1 text-xs font-medium text-muted-foreground">
+          <div className="mx-auto max-w-3xl text-center animate-fade-up">
+            <div className="mx-auto mb-5 inline-flex items-center gap-2 rounded-full border border-border bg-card/70 px-3 py-1 text-xs font-medium text-muted-foreground backdrop-blur">
               <span className="h-1.5 w-1.5 rounded-full bg-success" />
               Trusted by 240+ clinics across 18 countries
             </div>
             <h1 className="text-balance text-5xl font-semibold tracking-tight sm:text-6xl lg:text-7xl">
               Reduce Waiting.<br />
-              <span className="bg-gradient-to-r from-primary to-info bg-clip-text text-transparent">Improve Care.</span>
+              <span className="gradient-text">Improve Care.</span>
             </h1>
             <p className="mx-auto mt-6 max-w-2xl text-balance text-lg text-muted-foreground">
               Reduce waiting times, simplify scheduling, and improve patient satisfaction with smart digital queue management.
             </p>
             <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-              <Link to="/login"><Button size="lg" className="rounded-full px-7">Book a Demo<ArrowRight className="ml-1 h-4 w-4" /></Button></Link>
+              <Link to="/login"><Button size="lg" className="rounded-full px-7 shadow-lg shadow-primary/25 hover:shadow-primary/40 transition-shadow">Book a Demo<ArrowRight className="ml-1 h-4 w-4" /></Button></Link>
               <a href="#features"><Button size="lg" variant="outline" className="rounded-full px-7">See features</Button></a>
             </div>
           </div>
 
           {/* Hero card preview */}
-          <div className="mx-auto mt-16 max-w-5xl">
-            <div className="rounded-3xl border border-border bg-card p-3 card-elevated">
+          <div className="mx-auto mt-16 max-w-5xl animate-fade-up delay-300">
+            <div className="gradient-border rounded-3xl p-3 card-glow">
               <div className="rounded-2xl bg-background p-6">
                 <div className="grid gap-6 md:grid-cols-3">
                   <PreviewStat icon={Clock} label="Avg. wait time" value="12 min" hint="−68% vs. last month" />
@@ -97,7 +98,7 @@ function Landing() {
                     { t: "A-022", n: "Ahmed Saleh", d: "Dr. Hassan", s: "Waiting · 8m", c: "bg-warning/15 text-warning-foreground" },
                     { t: "A-023", n: "Lina Park", d: "Dr. Dubois", s: "Waiting · 15m", c: "bg-warning/15 text-warning-foreground" },
                   ].map((r) => (
-                    <div key={r.t} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3">
+                    <div key={r.t} className="flex items-center justify-between rounded-xl border border-border bg-card px-4 py-3 transition-colors hover:bg-primary-soft/30">
                       <div className="flex items-center gap-3">
                         <span className="rounded-md bg-muted px-2 py-1 font-mono text-xs">{r.t}</span>
                         <div className="text-sm font-medium">{r.n}</div>
@@ -108,6 +109,15 @@ function Landing() {
                   ))}
                 </div>
               </div>
+            </div>
+            <div className="mt-6 flex flex-wrap items-center justify-center gap-x-10 gap-y-3 text-xs uppercase tracking-widest text-muted-foreground">
+              <span>HIPAA-aware</span>
+              <span className="h-1 w-1 rounded-full bg-border" />
+              <span>SOC 2 ready</span>
+              <span className="h-1 w-1 rounded-full bg-border" />
+              <span>ISO 27001</span>
+              <span className="h-1 w-1 rounded-full bg-border" />
+              <span>99.99% uptime</span>
             </div>
           </div>
         </div>
@@ -122,9 +132,9 @@ function Landing() {
             <p className="mt-3 text-muted-foreground">Built with receptionists, doctors and patients — not just IT.</p>
           </div>
           <div className="mt-14 grid gap-4 sm:grid-cols-2 lg:grid-cols-3">
-            {features.map((f) => (
-              <div key={f.title} className="group rounded-2xl border border-border bg-card p-6 transition hover:-translate-y-0.5 hover:card-elevated">
-                <div className="grid h-11 w-11 place-items-center rounded-xl bg-primary-soft text-primary">
+            {features.map((f, i) => (
+              <div key={f.title} style={{ animationDelay: `${i * 60}ms` }} className="group animate-fade-up rounded-2xl border border-border bg-card p-6 transition-all duration-300 hover:-translate-y-1 hover:card-glow">
+                <div className="grid h-11 w-11 place-items-center rounded-xl bg-gradient-to-br from-primary/15 to-info/15 text-primary ring-1 ring-primary/15 transition-transform duration-300 group-hover:scale-110">
                   <f.icon className="h-5 w-5" />
                 </div>
                 <h3 className="mt-4 text-lg font-semibold">{f.title}</h3>
@@ -220,8 +230,10 @@ function Landing() {
       {/* CTA */}
       <section className="py-24">
         <div className="mx-auto max-w-5xl px-4 sm:px-6 lg:px-8">
-          <div className="relative overflow-hidden rounded-3xl bg-primary p-10 text-primary-foreground sm:p-16">
+          <div className="relative overflow-hidden rounded-3xl bg-gradient-to-br from-primary via-primary to-info p-10 text-primary-foreground sm:p-16 card-glow">
             <div className="absolute inset-0 bg-grid opacity-20" />
+            <div className="absolute -bottom-24 -right-16 h-64 w-64 rounded-full bg-white/10 blur-3xl" />
+            <div className="absolute -top-20 -left-10 h-56 w-56 rounded-full bg-white/10 blur-3xl" />
             <div className="relative">
               <Stethoscope className="h-9 w-9 opacity-80" />
               <h2 className="mt-5 text-balance text-4xl font-semibold tracking-tight sm:text-5xl">
