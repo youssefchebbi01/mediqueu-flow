@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as PatientRouteImport } from './routes/patient'
@@ -18,6 +19,11 @@ import { Route as BookRouteImport } from './routes/book'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 
+const SettingsRoute = SettingsRouteImport.update({
+  id: '/settings',
+  path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReceptionRoute = ReceptionRouteImport.update({
   id: '/reception',
   path: '/reception',
@@ -68,6 +74,7 @@ export interface FileRoutesByFullPath {
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/settings': typeof SettingsRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
@@ -78,6 +85,7 @@ export interface FileRoutesByTo {
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/settings': typeof SettingsRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
@@ -89,6 +97,7 @@ export interface FileRoutesById {
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/settings': typeof SettingsRoute
 }
 export interface FileRouteTypes {
   fileRoutesByFullPath: FileRoutesByFullPath
@@ -101,6 +110,7 @@ export interface FileRouteTypes {
     | '/patient'
     | '/queue'
     | '/reception'
+    | '/settings'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
@@ -111,6 +121,7 @@ export interface FileRouteTypes {
     | '/patient'
     | '/queue'
     | '/reception'
+    | '/settings'
   id:
     | '__root__'
     | '/'
@@ -121,6 +132,7 @@ export interface FileRouteTypes {
     | '/patient'
     | '/queue'
     | '/reception'
+    | '/settings'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
@@ -132,10 +144,18 @@ export interface RootRouteChildren {
   PatientRoute: typeof PatientRoute
   QueueRoute: typeof QueueRoute
   ReceptionRoute: typeof ReceptionRoute
+  SettingsRoute: typeof SettingsRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/settings': {
+      id: '/settings'
+      path: '/settings'
+      fullPath: '/settings'
+      preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reception': {
       id: '/reception'
       path: '/reception'
@@ -204,6 +224,7 @@ const rootRouteChildren: RootRouteChildren = {
   PatientRoute: PatientRoute,
   QueueRoute: QueueRoute,
   ReceptionRoute: ReceptionRoute,
+  SettingsRoute: SettingsRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
