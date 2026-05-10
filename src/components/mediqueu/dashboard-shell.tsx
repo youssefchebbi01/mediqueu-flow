@@ -3,6 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard, CalendarPlus, ListOrdered, Settings, BarChart3,
   Users, Stethoscope, Bell, Search, Moon, Sun, LogOut, Menu, X, ClipboardList,
+  ShieldCheck,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -40,6 +41,7 @@ const navByRole: Record<string, NavItem[]> = {
     { to: "/admin", label: "Overview", icon: LayoutDashboard },
     { to: "/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/queue", label: "Queue Monitor", icon: ListOrdered },
+    { to: "/team", label: "Team & SMS", icon: ShieldCheck },
     { to: "/settings", label: "Clinic Settings", icon: Settings },
   ],
 };
