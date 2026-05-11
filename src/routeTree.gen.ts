@@ -15,6 +15,7 @@ import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as PatientRouteImport } from './routes/patient'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -50,6 +51,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const DoctorRoute = DoctorRouteImport.update({
+  id: '/doctor',
+  path: '/doctor',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
@@ -76,6 +82,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
+  '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
@@ -88,6 +95,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
+  '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
@@ -101,6 +109,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
+  '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
@@ -115,6 +124,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/book'
+    | '/doctor'
     | '/login'
     | '/patient'
     | '/queue'
@@ -127,6 +137,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/book'
+    | '/doctor'
     | '/login'
     | '/patient'
     | '/queue'
@@ -139,6 +150,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/book'
+    | '/doctor'
     | '/login'
     | '/patient'
     | '/queue'
@@ -152,6 +164,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AnalyticsRoute: typeof AnalyticsRoute
   BookRoute: typeof BookRoute
+  DoctorRoute: typeof DoctorRoute
   LoginRoute: typeof LoginRoute
   PatientRoute: typeof PatientRoute
   QueueRoute: typeof QueueRoute
@@ -204,6 +217,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/doctor': {
+      id: '/doctor'
+      path: '/doctor'
+      fullPath: '/doctor'
+      preLoaderRoute: typeof DoctorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/book': {
       id: '/book'
       path: '/book'
@@ -240,6 +260,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AnalyticsRoute: AnalyticsRoute,
   BookRoute: BookRoute,
+  DoctorRoute: DoctorRoute,
   LoginRoute: LoginRoute,
   PatientRoute: PatientRoute,
   QueueRoute: QueueRoute,
