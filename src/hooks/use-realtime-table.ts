@@ -35,7 +35,7 @@ export function useRealtimeTable<T extends { id: string }>(
       if (orderBy) q = q.order(orderBy.column, { ascending: orderBy.ascending ?? true });
       const { data } = await q;
       if (!cancelled) {
-        setRows((data ?? []) as T[]);
+        setRows((data ?? []) as unknown as T[]);
         setLoading(false);
       }
     };
@@ -56,14 +56,15 @@ export function useRealtimeTable<T extends { id: string }>(
         (payload) => {
           setRows((prev) => {
             const next = [...prev];
+            const newRow = payload.new as unknown as T;
             if (payload.eventType === "INSERT") {
-              next.push(payload.new as T);
+              next.push(newRow);
             } else if (payload.eventType === "UPDATE") {
-              const i = next.findIndex((r) => r.id === (payload.new as T).id);
-              if (i >= 0) next[i] = payload.new as T;
-              else next.push(payload.new as T);
+              const i = next.findIndex((r) => r.id === newRow.id);
+              if (i >= 0) next[i] = newRow;
+              else next.push(newRow);
             } else if (payload.eventType === "DELETE") {
-              const id = (payload.old as T).id;
+              const id = (payload.old as unknown as T).id;
               return next.filter((r) => r.id !== id);
             }
             if (orderBy) {
