@@ -15,7 +15,10 @@ import {
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
-import { notifications } from "@/lib/mock-data";
+import { useRealtimeTable } from "@/hooks/use-realtime-table";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Notif = Tables<"notifications">;
 
 type NavItem = { to: string; label: string; icon: any };
 
@@ -52,6 +55,13 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
   const { user, profile, role: authRole, loading, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(false);
+
+  const { rows: notifs } = useRealtimeTable<Notif>("notifications", {
+    filter: user ? { column: "user_id", value: user.id } : null,
+    orderBy: { column: "created_at", ascending: false },
+    enabled: !!user,
+  });
+  const unread = notifs.filter((n) => !n.read).length;
 
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
@@ -142,15 +152,21 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
-              <DropdownMenuLabel>Notifications</DropdownMenuLabel>
+              <DropdownMenuLabel className="flex items-center justify-between">
+                <span>Notifications</span>
+                {unread > 0 && <span className="rounded-full bg-primary px-1.5 py-0.5 text-[10px] font-semibold text-primary-foreground">{unread}</span>}
+              </DropdownMenuLabel>
               <DropdownMenuSeparator />
-              {notifications.map((n) => (
+              {notifs.length === 0 && (
+                <div className="px-3 py-6 text-center text-xs text-muted-foreground">No notifications yet.</div>
+              )}
+              {notifs.slice(0, 8).map((n) => (
                 <DropdownMenuItem key={n.id} className="flex flex-col items-start gap-0.5 py-2.5">
                   <div className="flex w-full items-center justify-between">
                     <span className="text-sm font-medium">{n.title}</span>
-                    <span className="text-[10px] text-muted-foreground">{n.time}</span>
+                    <span className="text-[10px] text-muted-foreground">{new Date(n.created_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}</span>
                   </div>
-                  <span className="text-xs text-muted-foreground">{n.body}</span>
+                  {n.body && <span className="text-xs text-muted-foreground">{n.body}</span>}
                 </DropdownMenuItem>
               ))}
             </DropdownMenuContent>
