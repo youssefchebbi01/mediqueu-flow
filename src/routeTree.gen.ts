@@ -11,11 +11,8 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SettingsRouteImport } from './routes/settings'
-import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
-import { Route as PatientRouteImport } from './routes/patient'
 import { Route as LoginRouteImport } from './routes/login'
-import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -31,29 +28,14 @@ const SettingsRoute = SettingsRouteImport.update({
   path: '/settings',
   getParentRoute: () => rootRouteImport,
 } as any)
-const ReceptionRoute = ReceptionRouteImport.update({
-  id: '/reception',
-  path: '/reception',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const QueueRoute = QueueRouteImport.update({
   id: '/queue',
   path: '/queue',
   getParentRoute: () => rootRouteImport,
 } as any)
-const PatientRoute = PatientRouteImport.update({
-  id: '/patient',
-  path: '/patient',
-  getParentRoute: () => rootRouteImport,
-} as any)
 const LoginRoute = LoginRouteImport.update({
   id: '/login',
   path: '/login',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const DoctorRoute = DoctorRouteImport.update({
-  id: '/doctor',
-  path: '/doctor',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BookRoute = BookRouteImport.update({
@@ -82,11 +64,8 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
-  '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
-  '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
-  '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
 }
@@ -95,11 +74,8 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
-  '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
-  '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
-  '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
 }
@@ -109,11 +85,8 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/book': typeof BookRoute
-  '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
-  '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
-  '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
 }
@@ -124,11 +97,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/book'
-    | '/doctor'
     | '/login'
-    | '/patient'
     | '/queue'
-    | '/reception'
     | '/settings'
     | '/team'
   fileRoutesByTo: FileRoutesByTo
@@ -137,11 +107,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/book'
-    | '/doctor'
     | '/login'
-    | '/patient'
     | '/queue'
-    | '/reception'
     | '/settings'
     | '/team'
   id:
@@ -150,11 +117,8 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/book'
-    | '/doctor'
     | '/login'
-    | '/patient'
     | '/queue'
-    | '/reception'
     | '/settings'
     | '/team'
   fileRoutesById: FileRoutesById
@@ -164,11 +128,8 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AnalyticsRoute: typeof AnalyticsRoute
   BookRoute: typeof BookRoute
-  DoctorRoute: typeof DoctorRoute
   LoginRoute: typeof LoginRoute
-  PatientRoute: typeof PatientRoute
   QueueRoute: typeof QueueRoute
-  ReceptionRoute: typeof ReceptionRoute
   SettingsRoute: typeof SettingsRoute
   TeamRoute: typeof TeamRoute
 }
@@ -189,13 +150,6 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SettingsRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/reception': {
-      id: '/reception'
-      path: '/reception'
-      fullPath: '/reception'
-      preLoaderRoute: typeof ReceptionRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/queue': {
       id: '/queue'
       path: '/queue'
@@ -203,25 +157,11 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof QueueRouteImport
       parentRoute: typeof rootRouteImport
     }
-    '/patient': {
-      id: '/patient'
-      path: '/patient'
-      fullPath: '/patient'
-      preLoaderRoute: typeof PatientRouteImport
-      parentRoute: typeof rootRouteImport
-    }
     '/login': {
       id: '/login'
       path: '/login'
       fullPath: '/login'
       preLoaderRoute: typeof LoginRouteImport
-      parentRoute: typeof rootRouteImport
-    }
-    '/doctor': {
-      id: '/doctor'
-      path: '/doctor'
-      fullPath: '/doctor'
-      preLoaderRoute: typeof DoctorRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/book': {
@@ -260,14 +200,21 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AnalyticsRoute: AnalyticsRoute,
   BookRoute: BookRoute,
-  DoctorRoute: DoctorRoute,
   LoginRoute: LoginRoute,
-  PatientRoute: PatientRoute,
   QueueRoute: QueueRoute,
-  ReceptionRoute: ReceptionRoute,
   SettingsRoute: SettingsRoute,
   TeamRoute: TeamRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
