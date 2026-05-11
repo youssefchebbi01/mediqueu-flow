@@ -11,6 +11,7 @@
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SettingsRouteImport } from './routes/settings'
+import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as PatientRouteImport } from './routes/patient'
 import { Route as LoginRouteImport } from './routes/login'
@@ -27,6 +28,11 @@ const TeamRoute = TeamRouteImport.update({
 const SettingsRoute = SettingsRouteImport.update({
   id: '/settings',
   path: '/settings',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReceptionRoute = ReceptionRouteImport.update({
+  id: '/reception',
+  path: '/reception',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QueueRoute = QueueRouteImport.update({
@@ -73,6 +79,7 @@ export interface FileRoutesByFullPath {
   '/login': typeof LoginRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
+  '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
 }
@@ -84,6 +91,7 @@ export interface FileRoutesByTo {
   '/login': typeof LoginRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
+  '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
 }
@@ -96,6 +104,7 @@ export interface FileRoutesById {
   '/login': typeof LoginRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
+  '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
 }
@@ -109,6 +118,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/patient'
     | '/queue'
+    | '/reception'
     | '/settings'
     | '/team'
   fileRoutesByTo: FileRoutesByTo
@@ -120,6 +130,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/patient'
     | '/queue'
+    | '/reception'
     | '/settings'
     | '/team'
   id:
@@ -131,6 +142,7 @@ export interface FileRouteTypes {
     | '/login'
     | '/patient'
     | '/queue'
+    | '/reception'
     | '/settings'
     | '/team'
   fileRoutesById: FileRoutesById
@@ -143,6 +155,7 @@ export interface RootRouteChildren {
   LoginRoute: typeof LoginRoute
   PatientRoute: typeof PatientRoute
   QueueRoute: typeof QueueRoute
+  ReceptionRoute: typeof ReceptionRoute
   SettingsRoute: typeof SettingsRoute
   TeamRoute: typeof TeamRoute
 }
@@ -161,6 +174,13 @@ declare module '@tanstack/react-router' {
       path: '/settings'
       fullPath: '/settings'
       preLoaderRoute: typeof SettingsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reception': {
+      id: '/reception'
+      path: '/reception'
+      fullPath: '/reception'
+      preLoaderRoute: typeof ReceptionRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/queue': {
@@ -223,6 +243,7 @@ const rootRouteChildren: RootRouteChildren = {
   LoginRoute: LoginRoute,
   PatientRoute: PatientRoute,
   QueueRoute: QueueRoute,
+  ReceptionRoute: ReceptionRoute,
   SettingsRoute: SettingsRoute,
   TeamRoute: TeamRoute,
 }
