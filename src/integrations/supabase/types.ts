@@ -101,6 +101,79 @@ export type Database = {
         }
         Relationships: []
       }
+      consultation_notes: {
+        Row: {
+          appointment_id: string | null
+          chief_complaint: string | null
+          clinic_id: string | null
+          created_at: string
+          diagnosis: string | null
+          doctor_id: string | null
+          doctor_user_id: string | null
+          follow_up_date: string | null
+          id: string
+          notes: string | null
+          patient_id: string
+          prescription: string | null
+          treatment: string | null
+          updated_at: string
+        }
+        Insert: {
+          appointment_id?: string | null
+          chief_complaint?: string | null
+          clinic_id?: string | null
+          created_at?: string
+          diagnosis?: string | null
+          doctor_id?: string | null
+          doctor_user_id?: string | null
+          follow_up_date?: string | null
+          id?: string
+          notes?: string | null
+          patient_id: string
+          prescription?: string | null
+          treatment?: string | null
+          updated_at?: string
+        }
+        Update: {
+          appointment_id?: string | null
+          chief_complaint?: string | null
+          clinic_id?: string | null
+          created_at?: string
+          diagnosis?: string | null
+          doctor_id?: string | null
+          doctor_user_id?: string | null
+          follow_up_date?: string | null
+          id?: string
+          notes?: string | null
+          patient_id?: string
+          prescription?: string | null
+          treatment?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "consultation_notes_appointment_id_fkey"
+            columns: ["appointment_id"]
+            isOneToOne: false
+            referencedRelation: "appointments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_notes_clinic_id_fkey"
+            columns: ["clinic_id"]
+            isOneToOne: false
+            referencedRelation: "clinics"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_notes_doctor_id_fkey"
+            columns: ["doctor_id"]
+            isOneToOne: false
+            referencedRelation: "doctors_directory"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       doctors_directory: {
         Row: {
           available: boolean | null
