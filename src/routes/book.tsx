@@ -1,7 +1,7 @@
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { DashboardShell } from "@/components/mediqueu/dashboard-shell";
-import { specialties, doctors, timeSlots } from "@/lib/mock-data";
-import { useState } from "react";
+import { timeSlots } from "@/lib/mock-data";
+import { useEffect, useState } from "react";
 import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Textarea } from "@/components/ui/textarea";
@@ -10,6 +10,12 @@ import { Calendar } from "@/components/ui/calendar";
 import { Check, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/use-auth";
+import type { Tables } from "@/integrations/supabase/types";
+
+type Doctor = Tables<"doctors_directory">;
+type Specialty = Tables<"specialties">;
 
 export const Route = createFileRoute("/book")({
   head: () => ({ meta: [{ title: "Book Appointment — MediQueu" }] }),
@@ -18,12 +24,28 @@ export const Route = createFileRoute("/book")({
 
 function Book() {
   const navigate = useNavigate();
+  const { user } = useAuth();
+  const [specialties, setSpecialties] = useState<Specialty[]>([]);
+  const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [step, setStep] = useState(0);
-  const [specialty, setSpecialty] = useState<string>(specialties[0].name);
+  const [specialty, setSpecialty] = useState<string>("");
   const [doctorId, setDoctorId] = useState<string>("");
   const [date, setDate] = useState<Date | undefined>(new Date());
   const [slot, setSlot] = useState<string>("");
   const [reason, setReason] = useState("");
+  const [busy, setBusy] = useState(false);
+
+  useEffect(() => {
+    (async () => {
+      const [{ data: sp }, { data: docs }] = await Promise.all([
+        supabase.from("specialties").select("*").order("name"),
+        supabase.from("doctors_directory").select("*").order("name"),
+      ]);
+      setSpecialties(sp ?? []);
+      setDoctors(docs ?? []);
+      if (sp?.length && !specialty) setSpecialty(sp[0].name);
+    })();
+  }, []);
 
   const filteredDoctors = doctors.filter((d) => d.specialty === specialty);
   const steps = ["Specialty", "Doctor", "Date & time", "Confirm"];
@@ -31,8 +53,44 @@ function Book() {
   const next = () => setStep((s) => Math.min(steps.length - 1, s + 1));
   const back = () => setStep((s) => Math.max(0, s - 1));
 
-  const submit = () => {
-    toast.success("Appointment booked", { description: `${date?.toDateString()} at ${slot}` });
+  const submit = async () => {
+    if (!user) {
+      toast.error("Please sign in first");
+      return;
+    }
+    const doctor = doctors.find((d) => d.id === doctorId);
+    if (!doctor || !date || !slot) {
+      toast.error("Please complete all steps");
+      return;
+    }
+    setBusy(true);
+    const [h, m] = slot.split(":").map(Number);
+    const scheduled = new Date(date);
+    scheduled.setHours(h, m, 0, 0);
+    const { error } = await supabase.from("appointments").insert({
+      patient_id: user.id,
+      doctor_id: doctor.id,
+      doctor_name: doctor.name,
+      specialty,
+      scheduled_at: scheduled.toISOString(),
+      reason: reason || null,
+      status: "Confirmed",
+      clinic_id: doctor.clinic_id,
+    });
+    if (!error) {
+      await supabase.from("notifications").insert({
+        user_id: user.id,
+        title: "Appointment booked",
+        body: `${doctor.name} · ${scheduled.toLocaleString()}`,
+        type: "success",
+      });
+    }
+    setBusy(false);
+    if (error) {
+      toast.error("Booking failed", { description: error.message });
+      return;
+    }
+    toast.success("Appointment booked", { description: `${scheduled.toDateString()} at ${slot}` });
     navigate({ to: "/patient" });
   };
 
@@ -84,10 +142,10 @@ function Book() {
                     "flex w-full items-center gap-4 rounded-xl border p-4 text-left transition",
                     doctorId === d.id ? "border-primary bg-primary-soft" : "border-border hover:border-primary/40"
                   )}>
-                  <Avatar className="h-11 w-11"><AvatarFallback className="bg-primary text-primary-foreground">{d.avatar}</AvatarFallback></Avatar>
+                  <Avatar className="h-11 w-11"><AvatarFallback className="bg-primary text-primary-foreground">{(d.avatar ?? d.name).slice(0, 2).toUpperCase()}</AvatarFallback></Avatar>
                   <div className="flex-1">
                     <div className="text-sm font-medium">{d.name}</div>
-                    <div className="text-xs text-muted-foreground">{d.specialty} · ★ {d.rating} · Next: {d.nextSlot}</div>
+                    <div className="text-xs text-muted-foreground">{d.specialty} · ★ {d.rating ?? 4.8} · Next: {d.next_slot ?? "—"}</div>
                   </div>
                   <span className={`text-xs ${d.available ? "text-success" : "text-muted-foreground"}`}>{d.available ? "Available" : "Limited"}</span>
                 </button>
@@ -139,7 +197,7 @@ function Book() {
           <Button variant="ghost" onClick={back} disabled={step === 0}>Back</Button>
           {step < 3
             ? <Button onClick={next} className="rounded-full" disabled={(step === 1 && !doctorId) || (step === 2 && !slot)}>Continue</Button>
-            : <Button onClick={submit} className="rounded-full">Confirm booking</Button>}
+            : <Button onClick={submit} className="rounded-full" disabled={busy}>Confirm booking</Button>}
         </div>
       </div>
     </DashboardShell>
