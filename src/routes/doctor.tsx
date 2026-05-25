@@ -6,7 +6,9 @@ import { useAuth } from "@/hooks/use-auth";
 import { Users, Clock, CheckCircle2, FileText, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { useState } from "react";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { useEffect, useState } from "react";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -20,9 +22,24 @@ export const Route = createFileRoute("/doctor")({
 });
 
 function Doctor() {
-  const { profile } = useAuth();
+  const { user, profile } = useAuth();
   const [paused, setPaused] = useState(false);
-  const [notes, setNotes] = useState("");
+  const [chiefComplaint, setChiefComplaint] = useState("");
+  const [diagnosis, setDiagnosis] = useState("");
+  const [treatment, setTreatment] = useState("");
+  const [prescription, setPrescription] = useState("");
+  const [myDoctorId, setMyDoctorId] = useState<string | null>(null);
+
+  useEffect(() => {
+    if (!user) return;
+    supabase.from("doctors_directory").select("id, available").eq("user_id", user.id).maybeSingle()
+      .then(({ data }) => {
+        if (data) {
+          setMyDoctorId(data.id);
+          setPaused(!data.available);
+        }
+      });
+  }, [user]);
 
   const { rows: appts } = useRealtimeTable<Appt>("appointments", {
     orderBy: { column: "scheduled_at", ascending: true },
@@ -37,11 +54,48 @@ function Doctor() {
   const current = my.find((a) => a.status === "In Consultation") ?? my.find((a) => a.status === "Waiting") ?? my[0];
   const completed = my.filter((a) => a.status === "Completed").length;
 
+  const startCurrent = async () => {
+    if (!current) return;
+    await supabase.from("appointments").update({ status: "In Consultation" }).eq("id", current.id);
+    const q = queue.find((q) => q.patient_id === current.patient_id && q.status !== "Completed");
+    if (q) await supabase.from("queue_entries").update({ status: "Active", eta_min: 0 }).eq("id", q.id);
+    toast.success("Consultation started");
+  };
+
   const completeCurrent = async () => {
     if (!current) return;
+    // Save consultation note
+    await supabase.from("consultation_notes").insert({
+      appointment_id: current.id,
+      patient_id: current.patient_id,
+      doctor_id: current.doctor_id,
+      doctor_user_id: user?.id ?? null,
+      chief_complaint: chiefComplaint || null,
+      diagnosis: diagnosis || null,
+      treatment: treatment || null,
+      prescription: prescription || null,
+      clinic_id: current.clinic_id,
+    });
     await supabase.from("appointments").update({ status: "Completed" }).eq("id", current.id);
+    const q = queue.find((q) => q.patient_id === current.patient_id && q.status !== "Completed");
+    if (q) await supabase.from("queue_entries").update({ status: "Completed" }).eq("id", q.id);
+    await supabase.from("notifications").insert({
+      user_id: current.patient_id,
+      title: "Consultation complete",
+      body: "Notes and prescription are ready.",
+      type: "success",
+    });
     toast.success("Consultation completed");
-    setNotes("");
+    setChiefComplaint(""); setDiagnosis(""); setTreatment(""); setPrescription("");
+  };
+
+  const togglePause = async () => {
+    const newPaused = !paused;
+    setPaused(newPaused);
+    if (myDoctorId) {
+      await supabase.from("doctors_directory").update({ available: !newPaused }).eq("id", myDoctorId);
+    }
+    toast(newPaused ? "Availability paused" : "Availability resumed");
   };
 
   return (
@@ -65,21 +119,35 @@ function Doctor() {
               <div className="flex flex-shrink-0 flex-col items-end gap-2">
                 {current && <StatusBadge status={current.status} />}
                 <div className="flex flex-wrap gap-2">
-                  <Button size="sm" variant="outline" onClick={() => { setPaused((p) => !p); toast(paused ? "Queue resumed" : "Queue paused"); }}>
+                  <Button size="sm" variant="outline" onClick={togglePause}>
                     {paused ? <><Play className="mr-1.5 h-4 w-4" />Resume</> : <><Pause className="mr-1.5 h-4 w-4" />Pause</>}
                   </Button>
+                  {current?.status !== "In Consultation" && <Button size="sm" variant="outline" disabled={!current} onClick={startCurrent}>Start</Button>}
                   <Button size="sm" disabled={!current} onClick={completeCurrent}>Complete</Button>
                 </div>
               </div>
             </div>
 
             <div className="mt-6">
-              <label className="mb-2 block text-sm font-medium">Consultation notes</label>
-              <Textarea rows={6} value={notes} onChange={(e) => setNotes(e.target.value)} placeholder="Subjective, objective, assessment, plan…" />
-              <div className="mt-3 flex justify-end gap-2">
-                <Button variant="ghost" size="sm" onClick={() => toast("Draft saved locally")}>Save draft</Button>
-                <Button size="sm" onClick={() => toast.success("Notes saved")}>Save notes</Button>
+              <div className="grid gap-3 sm:grid-cols-2">
+                <div>
+                  <Label>Chief complaint</Label>
+                  <Input value={chiefComplaint} onChange={(e) => setChiefComplaint(e.target.value)} className="mt-1.5" placeholder="e.g. Persistent headache" />
+                </div>
+                <div>
+                  <Label>Diagnosis</Label>
+                  <Input value={diagnosis} onChange={(e) => setDiagnosis(e.target.value)} className="mt-1.5" placeholder="ICD or free text" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label>Treatment plan</Label>
+                  <Textarea rows={3} value={treatment} onChange={(e) => setTreatment(e.target.value)} className="mt-1.5" placeholder="Recommended treatment, follow-up…" />
+                </div>
+                <div className="sm:col-span-2">
+                  <Label>Prescription</Label>
+                  <Textarea rows={3} value={prescription} onChange={(e) => setPrescription(e.target.value)} className="mt-1.5" placeholder="Medication, dosage, duration" />
+                </div>
               </div>
+              <p className="mt-3 text-xs text-muted-foreground">Notes are saved when you mark the consultation complete.</p>
             </div>
           </div>
 
