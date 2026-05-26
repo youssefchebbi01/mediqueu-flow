@@ -2,12 +2,11 @@ import { Link, useNavigate, useRouterState } from "@tanstack/react-router";
 import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard, CalendarPlus, ListOrdered, Settings, BarChart3,
-  Users, Stethoscope, Bell, Search, Moon, Sun, LogOut, Menu, X, ClipboardList,
+  Bell, Search, Moon, Sun, LogOut, Menu, X,
   ShieldCheck,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import {
   DropdownMenu, DropdownMenuContent, DropdownMenuItem,
   DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger,
@@ -17,6 +16,7 @@ import { cn } from "@/lib/utils";
 import { useAuth } from "@/hooks/use-auth";
 import { useRealtimeTable } from "@/hooks/use-realtime-table";
 import type { Tables } from "@/integrations/supabase/types";
+import { CommandPalette } from "./command-palette";
 
 type Notif = Tables<"notifications">;
 
@@ -55,6 +55,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
   const { user, profile, role: authRole, loading, signOut } = useAuth();
   const [open, setOpen] = useState(false);
   const [dark, setDark] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
 
   const { rows: notifs } = useRealtimeTable<Notif>("notifications", {
     filter: user ? { column: "user_id", value: user.id } : null,
@@ -66,6 +67,29 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
   useEffect(() => {
     if (!loading && !user) navigate({ to: "/login" });
   }, [loading, user, navigate]);
+
+  // First-run: send to onboarding when profile is incomplete or admin has no clinic.
+  useEffect(() => {
+    if (loading || !user) return;
+    const seen = (() => { try { return localStorage.getItem(`mq_onboarded_${user.id}`) === "1"; } catch { return false; } })();
+    const needsName = !profile?.full_name;
+    const adminNeedsClinic = authRole === "admin" && !profile?.clinic_id;
+    if (!seen && (needsName || adminNeedsClinic) && path !== "/onboarding") {
+      navigate({ to: "/onboarding" });
+    }
+  }, [loading, user, profile, authRole, path, navigate]);
+
+  // ⌘K / Ctrl+K opens command palette
+  useEffect(() => {
+    function onKey(e: KeyboardEvent) {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
+        e.preventDefault();
+        setPaletteOpen((v) => !v);
+      }
+    }
+    window.addEventListener("keydown", onKey);
+    return () => window.removeEventListener("keydown", onKey);
+  }, []);
 
   const role = authRole ?? "patient";
   const name = profile?.full_name ?? user?.email ?? "Guest";
@@ -81,6 +105,8 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
     await signOut();
     navigate({ to: "/login" });
   };
+
+  const toggleTheme = () => setDark((d) => !d);
 
   return (
     <div className="min-h-screen bg-background text-foreground">
@@ -135,20 +161,33 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
       {/* Top bar */}
       <div className="lg:pl-64">
         <header className="sticky top-0 z-30 flex h-16 items-center gap-3 border-b border-border bg-background/80 px-4 backdrop-blur sm:px-6 lg:px-8">
-          <button className="lg:hidden" onClick={() => setOpen(true)}><Menu className="h-5 w-5" /></button>
-          <div className="relative hidden flex-1 max-w-md sm:block">
-            <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-            <Input placeholder="Search patients, appointments…" className="pl-9 bg-muted/40 border-transparent focus-visible:bg-background" />
-          </div>
+          <button
+            className="lg:hidden rounded-md p-2 hover:bg-muted"
+            onClick={() => setOpen(true)}
+            aria-label="Open navigation"
+          >
+            <Menu className="h-5 w-5" />
+          </button>
+          <button
+            onClick={() => setPaletteOpen(true)}
+            className="group relative hidden h-9 w-full max-w-md items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted sm:flex"
+            aria-label="Open command palette"
+          >
+            <Search className="h-4 w-4" />
+            <span>Search patients, doctors, or jump…</span>
+            <kbd className="ml-auto hidden items-center gap-1 rounded border border-border bg-background px-1.5 py-0.5 font-mono text-[10px] font-medium md:inline-flex">
+              ⌘K
+            </kbd>
+          </button>
           <div className="flex-1 sm:hidden" />
-          <Button variant="ghost" size="icon" onClick={() => setDark((d) => !d)} aria-label="Toggle theme">
+          <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label="Toggle theme">
             {dark ? <Sun className="h-4 w-4" /> : <Moon className="h-4 w-4" />}
           </Button>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <Button variant="ghost" size="icon" className="relative">
+              <Button variant="ghost" size="icon" className="relative" aria-label={`Notifications${unread ? `, ${unread} unread` : ""}`}>
                 <Bell className="h-4 w-4" />
-                <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary" />
+                {unread > 0 && <span className="absolute right-2 top-2 h-2 w-2 rounded-full bg-primary animate-pulse-soft" />}
               </Button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-80">
@@ -173,7 +212,9 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
           </DropdownMenu>
           <DropdownMenu>
             <DropdownMenuTrigger asChild>
-              <button className="rounded-full"><Avatar className="h-9 w-9"><AvatarFallback className="bg-primary-soft text-primary text-xs">{initials}</AvatarFallback></Avatar></button>
+              <button className="rounded-full" aria-label="Account menu">
+                <Avatar className="h-9 w-9"><AvatarFallback className="bg-primary-soft text-primary text-xs">{initials}</AvatarFallback></Avatar>
+              </button>
             </DropdownMenuTrigger>
             <DropdownMenuContent align="end" className="w-56">
               <DropdownMenuLabel>{name}</DropdownMenuLabel>
@@ -196,6 +237,8 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
       </div>
 
       {open && <div className="fixed inset-0 z-30 bg-foreground/20 lg:hidden" onClick={() => setOpen(false)} />}
+
+      <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onToggleTheme={toggleTheme} />
     </div>
   );
 }
