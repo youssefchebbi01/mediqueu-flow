@@ -94,7 +94,7 @@ function Onboarding() {
 
       try { localStorage.setItem(`mq_onboarded_${user.id}`, "1"); } catch {}
       toast.success("You're all set!");
-      navigate({ to: dashboardPath[role ?? "patient"] });
+      navigate({ to: dashboardPath[role ?? "patient"] as any });
     } catch (e: any) {
       toast.error(e?.message ?? "Could not save");
     } finally {
@@ -117,7 +117,7 @@ function Onboarding() {
         <header className="flex items-center justify-between">
           <Logo />
           <button
-            onClick={() => navigate({ to: dashboardPath[role ?? "patient"] })}
+            onClick={() => navigate({ to: dashboardPath[role ?? "patient"] as any })}
             className="text-xs text-muted-foreground hover:text-foreground"
           >
             Skip for now
