@@ -52,7 +52,7 @@ export function CommandPalette({
     return () => { cancelled = true; clearTimeout(t); };
   }, [q]);
 
-  const go = (to: string) => { onOpenChange(false); navigate({ to }); };
+  const go = (to: string) => { onOpenChange(false); navigate({ to: to as any }); };
 
   const nav: { label: string; to: string; icon: any; roles?: string[] }[] = [
     { label: "Overview", to: "/patient", icon: LayoutDashboard, roles: ["patient"] },
