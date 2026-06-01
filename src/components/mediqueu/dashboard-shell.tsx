@@ -17,6 +17,7 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRealtimeTable } from "@/hooks/use-realtime-table";
 import type { Tables } from "@/integrations/supabase/types";
 import { CommandPalette } from "./command-palette";
+import { RouteProgress } from "./route-progress";
 
 type Notif = Tables<"notifications">;
 
@@ -110,6 +111,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
 
   return (
     <div className="min-h-screen bg-background text-foreground">
+      <RouteProgress />
       {/* Sidebar */}
       <aside className={cn(
         "fixed inset-y-0 left-0 z-40 w-64 border-r border-sidebar-border bg-sidebar transition-transform lg:translate-x-0",
@@ -226,13 +228,13 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
         </header>
 
         <main className="px-4 py-6 sm:px-6 lg:px-8">
-          <div className="mb-6 animate-fade-up">
+          <div key={path} className="mb-6 animate-fade-up">
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               {title}
             </h1>
             {subtitle && <p className="mt-1.5 text-sm text-muted-foreground">{subtitle}</p>}
           </div>
-          <div className="animate-fade-up delay-75">{children}</div>
+          <div key={`${path}-body`} className="animate-fade-up delay-75">{children}</div>
         </main>
       </div>
 
