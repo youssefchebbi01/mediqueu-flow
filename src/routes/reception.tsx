@@ -2,17 +2,19 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, StatCard } from "@/components/mediqueu/dashboard-shell";
 import { StatusBadge } from "@/components/mediqueu/status-badge";
 import { useRealtimeTable } from "@/hooks/use-realtime-table";
-import { Users, CalendarCheck, Clock, AlertCircle, UserPlus, Printer, Search, ArrowUp, ArrowDown, PlayCircle, X } from "lucide-react";
+import { Users, CalendarCheck, Clock, AlertCircle, UserPlus, Printer, ArrowUp, ArrowDown, PlayCircle, X, CalendarX } from "lucide-react";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogTrigger } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
+import { DataTable, type Column } from "@/components/mediqueu/data-table";
+import { AdvancedFilters, type FilterValues } from "@/components/mediqueu/advanced-filters";
+import { EmptyState } from "@/components/mediqueu/empty-state";
 
 type Appt = Tables<"appointments">;
 type QueueRow = Tables<"queue_entries">;
@@ -25,12 +27,14 @@ export const Route = createFileRoute("/reception")({
 });
 
 function Reception() {
-  const [search, setSearch] = useState("");
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [patients, setPatients] = useState<Profile[]>([]);
   const [walkInOpen, setWalkInOpen] = useState(false);
   const [walkPatient, setWalkPatient] = useState("");
   const [walkDoctor, setWalkDoctor] = useState("");
+  const [filters, setFilters] = useState<FilterValues>({
+    q: "", doctor: "all", specialty: "all", status: "all", when: "today",
+  });
 
   const { rows: appts } = useRealtimeTable<Appt>("appointments", {
     orderBy: { column: "scheduled_at", ascending: true },
@@ -44,9 +48,25 @@ function Reception() {
     supabase.from("profiles").select("*").order("full_name").then(({ data }) => setPatients(data ?? []));
   }, []);
 
-  const today = new Date().toDateString();
-  const todayAppts = appts.filter((a) => new Date(a.scheduled_at).toDateString() === today);
-  const filtered = todayAppts.filter((a) => !search || a.doctor_name.toLowerCase().includes(search.toLowerCase()));
+  const todayStr = new Date().toDateString();
+  const filtered = useMemo(() => {
+    const q = (filters.q ?? "").toLowerCase();
+    return appts.filter((a) => {
+      const d = new Date(a.scheduled_at);
+      const isToday = d.toDateString() === todayStr;
+      if (filters.when === "today" && !isToday) return false;
+      if (filters.when === "upcoming" && d.getTime() < Date.now()) return false;
+      if (filters.when === "completed" && a.status !== "Completed") return false;
+      if (filters.when === "noshow" && a.status !== "No Show") return false;
+      if (filters.doctor !== "all" && a.doctor_id !== filters.doctor) return false;
+      if (filters.specialty !== "all" && a.specialty !== filters.specialty) return false;
+      if (filters.status !== "all" && a.status !== filters.status) return false;
+      if (q && !(a.doctor_name.toLowerCase().includes(q) || (a.reason ?? "").toLowerCase().includes(q))) return false;
+      return true;
+    });
+  }, [appts, filters, todayStr]);
+
+  const todayAppts = appts.filter((a) => new Date(a.scheduled_at).toDateString() === todayStr);
   const inWaiting = queue.filter((q) => q.status === "Waiting").length;
   const delays = queue.filter((q) => (q.eta_min ?? 0) > 20).length;
   const avgWait = queue.length
@@ -94,6 +114,11 @@ function Reception() {
   const cancelAppt = async (a: Appt, status: "Cancelled" | "No Show") => {
     await supabase.from("appointments").update({ status }).eq("id", a.id);
     toast(status === "Cancelled" ? "Appointment cancelled" : "Marked as no-show");
+  };
+
+  const bulkUpdate = async (ids: string[], status: "Cancelled" | "Confirmed") => {
+    await supabase.from("appointments").update({ status }).in("id", ids);
+    toast.success(`${ids.length} appointment(s) updated`);
   };
 
   const moveQueue = async (q: QueueRow, dir: -1 | 1) => {
@@ -158,6 +183,31 @@ function Reception() {
     setWalkDoctor("");
   };
 
+  const specialtyOpts = useMemo(() => {
+    const set = new Set<string>();
+    appts.forEach((a) => a.specialty && set.add(a.specialty));
+    return Array.from(set).sort();
+  }, [appts]);
+
+  const apptColumns: Column<Appt>[] = [
+    {
+      id: "time", header: "Time", sortable: true,
+      accessor: (a) => a.scheduled_at,
+      cell: (a) => (
+        <span className="whitespace-nowrap font-medium tabular-nums">
+          {new Date(a.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
+        </span>
+      ),
+    },
+    { id: "doctor", header: "Doctor", sortable: true, accessor: (a) => a.doctor_name },
+    { id: "specialty", header: "Specialty", sortable: true, accessor: (a) => a.specialty, hideBelow: "md",
+      cell: (a) => <span className="text-muted-foreground">{a.specialty}</span> },
+    { id: "reason", header: "Reason", accessor: (a) => a.reason ?? "—", hideBelow: "lg",
+      cell: (a) => <span className="text-muted-foreground">{a.reason ?? "—"}</span> },
+    { id: "status", header: "Status", sortable: true, accessor: (a) => a.status,
+      cell: (a) => <StatusBadge status={a.status} /> },
+  ];
+
   return (
     <DashboardShell title="Front Desk" subtitle={`${new Date().toLocaleDateString([], { weekday: "long" })} · live clinic flow.`}>
       <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">
@@ -168,14 +218,10 @@ function Reception() {
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="lg:col-span-2 rounded-2xl border border-border bg-card">
-          <div className="flex flex-wrap items-center justify-between gap-3 border-b border-border px-4 py-3 sm:px-6 sm:py-4">
-            <h3 className="font-semibold">Today's appointments</h3>
+        <div className="lg:col-span-2 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <h3 className="font-semibold">Appointments</h3>
             <div className="flex flex-wrap gap-2">
-              <div className="relative">
-                <Search className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground" />
-                <Input placeholder="Search doctor" value={search} onChange={(e) => setSearch(e.target.value)} className="h-9 w-40 pl-9 sm:w-48" />
-              </div>
               <Dialog open={walkInOpen} onOpenChange={setWalkInOpen}>
                 <DialogTrigger asChild>
                   <Button size="sm" variant="outline"><UserPlus className="mr-1.5 h-4 w-4" />Walk-in</Button>
@@ -217,51 +263,82 @@ function Reception() {
               </Button>
             </div>
           </div>
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-muted/40 text-xs uppercase tracking-wider text-muted-foreground">
-                <tr>
-                  <th className="px-4 py-3 text-left font-medium sm:px-6">Time</th>
-                  <th className="px-4 py-3 text-left font-medium sm:px-6">Doctor</th>
-                  <th className="hidden px-6 py-3 text-left font-medium md:table-cell">Specialty</th>
-                  <th className="hidden px-6 py-3 text-left font-medium lg:table-cell">Reason</th>
-                  <th className="px-4 py-3 text-left font-medium sm:px-6">Status</th>
-                  <th className="px-4 py-3 sm:px-6" />
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-border">
-                {filtered.length === 0 && (
-                  <tr><td colSpan={6} className="px-6 py-10 text-center text-sm text-muted-foreground">No appointments today.</td></tr>
+
+          <AdvancedFilters
+            storageKey="reception_appts"
+            values={filters}
+            onChange={setFilters}
+            fields={[
+              { kind: "search", id: "q", placeholder: "Search doctor or reason" },
+              { kind: "select", id: "when", label: "When", options: [
+                { value: "today", label: "Today" },
+                { value: "upcoming", label: "Upcoming" },
+                { value: "completed", label: "Completed" },
+                { value: "noshow", label: "No-shows" },
+                { value: "all", label: "All time" },
+              ]},
+              { kind: "select", id: "doctor", label: "Doctor", options: [
+                { value: "all", label: "All doctors" },
+                ...doctors.map((d) => ({ value: d.id, label: d.name })),
+              ]},
+              { kind: "select", id: "specialty", label: "Specialty", options: [
+                { value: "all", label: "All specialties" },
+                ...specialtyOpts.map((s) => ({ value: s, label: s })),
+              ]},
+              { kind: "select", id: "status", label: "Status", options: [
+                { value: "all", label: "Any status" },
+                { value: "Pending", label: "Pending" },
+                { value: "Confirmed", label: "Confirmed" },
+                { value: "Waiting", label: "Waiting" },
+                { value: "In Consultation", label: "In Consultation" },
+                { value: "Completed", label: "Completed" },
+                { value: "Cancelled", label: "Cancelled" },
+                { value: "No Show", label: "No Show" },
+              ]},
+            ]}
+          />
+
+          <DataTable<Appt>
+            rows={filtered}
+            columns={apptColumns}
+            storageKey="reception_appts"
+            pageSize={12}
+            selectable
+            initialSort={{ id: "time", dir: "asc" }}
+            empty={{
+              icon: CalendarX,
+              title: "No appointments match these filters",
+              description: "Try widening the date range, clearing filters, or adding a walk-in.",
+              action: <Button size="sm" onClick={() => setWalkInOpen(true)}><UserPlus className="mr-1.5 h-4 w-4" />Add walk-in</Button>,
+            }}
+            bulkActions={(sel, clear) => (
+              <>
+                <Button size="sm" variant="ghost" className="h-7 px-2"
+                  onClick={async () => { await bulkUpdate(sel.map((s) => s.id), "Confirmed"); clear(); }}>
+                  Confirm
+                </Button>
+                <Button size="sm" variant="ghost" className="h-7 px-2 text-destructive"
+                  onClick={async () => { await bulkUpdate(sel.map((s) => s.id), "Cancelled"); clear(); }}>
+                  Cancel
+                </Button>
+              </>
+            )}
+            rowActions={(a) => (
+              <div className="flex justify-end gap-1">
+                {a.status === "Confirmed" || a.status === "Pending" ? (
+                  <Button size="sm" variant="ghost" onClick={() => markArrived(a)}>Arrived</Button>
+                ) : a.status === "Waiting" ? (
+                  <Button size="sm" variant="ghost" onClick={() => startConsult(a)}><PlayCircle className="mr-1 h-3.5 w-3.5" />Start</Button>
+                ) : null}
+                {!["Completed", "Cancelled", "No Show"].includes(a.status) && (
+                  <>
+                    <Button size="sm" variant="ghost" onClick={() => cancelAppt(a, "Cancelled")} title="Cancel"><X className="h-3.5 w-3.5" /></Button>
+                    <Button size="sm" variant="ghost" onClick={() => cancelAppt(a, "No Show")} title="No-show"><AlertCircle className="h-3.5 w-3.5" /></Button>
+                  </>
                 )}
-                {filtered.map((a) => (
-                  <tr key={a.id} className="hover:bg-muted/30">
-                    <td className="whitespace-nowrap px-4 py-3 font-medium sm:px-6">
-                      {new Date(a.scheduled_at).toLocaleTimeString([], { hour: "2-digit", minute: "2-digit" })}
-                    </td>
-                    <td className="px-4 py-3 sm:px-6">{a.doctor_name}</td>
-                    <td className="hidden px-6 py-3 text-muted-foreground md:table-cell">{a.specialty}</td>
-                    <td className="hidden px-6 py-3 text-muted-foreground lg:table-cell">{a.reason ?? "—"}</td>
-                    <td className="px-4 py-3 sm:px-6"><StatusBadge status={a.status} /></td>
-                    <td className="px-4 py-3 text-right sm:px-6">
-                      <div className="flex justify-end gap-1">
-                        {a.status === "Confirmed" || a.status === "Pending" ? (
-                          <Button size="sm" variant="ghost" onClick={() => markArrived(a)}>Arrived</Button>
-                        ) : a.status === "Waiting" ? (
-                          <Button size="sm" variant="ghost" onClick={() => startConsult(a)}><PlayCircle className="mr-1 h-3.5 w-3.5" />Start</Button>
-                        ) : null}
-                        {!["Completed", "Cancelled", "No Show"].includes(a.status) && (
-                          <>
-                            <Button size="sm" variant="ghost" onClick={() => cancelAppt(a, "Cancelled")} title="Cancel"><X className="h-3.5 w-3.5" /></Button>
-                            <Button size="sm" variant="ghost" onClick={() => cancelAppt(a, "No Show")} title="No-show"><AlertCircle className="h-3.5 w-3.5" /></Button>
-                          </>
-                        )}
-                      </div>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
-          </div>
+              </div>
+            )}
+          />
         </div>
 
         <div className="rounded-2xl border border-border bg-card p-5 sm:p-6">
@@ -290,7 +367,14 @@ function Reception() {
           <span className="text-xs text-muted-foreground">Live · {queue.filter((q) => q.status !== "Completed").length} active</span>
         </div>
         {queue.length === 0 ? (
-          <div className="px-6 py-10 text-center text-sm text-muted-foreground">No active tickets.</div>
+          <div className="p-4">
+            <EmptyState
+              icon={Users}
+              title="Queue is empty"
+              description="When patients arrive or are added as walk-ins, they'll appear here in real time."
+              action={<Button size="sm" onClick={() => setWalkInOpen(true)}><UserPlus className="mr-1.5 h-4 w-4" />Add walk-in</Button>}
+            />
+          </div>
         ) : (
           <ul className="divide-y divide-border">
             {queue.filter((q) => q.status !== "Completed").map((q) => (
