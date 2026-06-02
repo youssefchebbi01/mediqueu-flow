@@ -82,9 +82,22 @@ function Onboarding() {
       await supabase.from("profiles").update(profileUpdate).eq("user_id", user.id);
 
       if ((role === "admin" || role === "receptionist") && clinicName) {
+        const { data: prof } = await supabase
+          .from("profiles")
+          .select("current_org_id")
+          .eq("user_id", user.id)
+          .maybeSingle();
+        const orgId = prof?.current_org_id;
+        if (!orgId) throw new Error("No active organization");
         const { data: clinic } = await supabase
           .from("clinics")
-          .insert({ name: clinicName, address: clinicAddress, phone: clinicPhone, timezone })
+          .insert({
+            name: clinicName,
+            address: clinicAddress,
+            phone: clinicPhone,
+            timezone,
+            organization_id: orgId,
+          })
           .select("id")
           .single();
         if (clinic?.id) {
