@@ -21,6 +21,7 @@ export type Database = {
           doctor_id: string | null
           doctor_name: string
           id: string
+          organization_id: string | null
           patient_id: string
           reason: string | null
           scheduled_at: string
@@ -34,6 +35,7 @@ export type Database = {
           doctor_id?: string | null
           doctor_name: string
           id?: string
+          organization_id?: string | null
           patient_id: string
           reason?: string | null
           scheduled_at: string
@@ -47,6 +49,7 @@ export type Database = {
           doctor_id?: string | null
           doctor_name?: string
           id?: string
+          organization_id?: string | null
           patient_id?: string
           reason?: string | null
           scheduled_at?: string
@@ -69,6 +72,57 @@ export type Database = {
             referencedRelation: "doctors_directory"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "appointments_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      audit_logs: {
+        Row: {
+          action: string
+          actor_email: string | null
+          actor_id: string | null
+          created_at: string
+          entity_id: string | null
+          entity_type: string | null
+          id: string
+          metadata: Json | null
+          org_id: string | null
+        }
+        Insert: {
+          action: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          org_id?: string | null
+        }
+        Update: {
+          action?: string
+          actor_email?: string | null
+          actor_id?: string | null
+          created_at?: string
+          entity_id?: string | null
+          entity_type?: string | null
+          id?: string
+          metadata?: Json | null
+          org_id?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "audit_logs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
         ]
       }
       clinics: {
@@ -77,6 +131,7 @@ export type Database = {
           created_at: string
           id: string
           name: string
+          organization_id: string
           phone: string | null
           timezone: string | null
           updated_at: string
@@ -86,6 +141,7 @@ export type Database = {
           created_at?: string
           id?: string
           name: string
+          organization_id: string
           phone?: string | null
           timezone?: string | null
           updated_at?: string
@@ -95,11 +151,20 @@ export type Database = {
           created_at?: string
           id?: string
           name?: string
+          organization_id?: string
           phone?: string | null
           timezone?: string | null
           updated_at?: string
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "clinics_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       consultation_notes: {
         Row: {
@@ -113,6 +178,7 @@ export type Database = {
           follow_up_date: string | null
           id: string
           notes: string | null
+          organization_id: string | null
           patient_id: string
           prescription: string | null
           treatment: string | null
@@ -129,6 +195,7 @@ export type Database = {
           follow_up_date?: string | null
           id?: string
           notes?: string | null
+          organization_id?: string | null
           patient_id: string
           prescription?: string | null
           treatment?: string | null
@@ -145,6 +212,7 @@ export type Database = {
           follow_up_date?: string | null
           id?: string
           notes?: string | null
+          organization_id?: string | null
           patient_id?: string
           prescription?: string | null
           treatment?: string | null
@@ -170,6 +238,13 @@ export type Database = {
             columns: ["doctor_id"]
             isOneToOne: false
             referencedRelation: "doctors_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "consultation_notes_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -224,9 +299,67 @@ export type Database = {
           },
         ]
       }
+      login_events: {
+        Row: {
+          created_at: string
+          event: string
+          id: string
+          ip: string | null
+          user_agent: string | null
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          id?: string
+          ip?: string | null
+          user_agent?: string | null
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          id?: string
+          ip?: string | null
+          user_agent?: string | null
+          user_id?: string
+        }
+        Relationships: []
+      }
+      notification_preferences: {
+        Row: {
+          category: Database["public"]["Enums"]["notification_category"]
+          email_enabled: boolean
+          id: string
+          in_app_enabled: boolean
+          sms_enabled: boolean
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          category: Database["public"]["Enums"]["notification_category"]
+          email_enabled?: boolean
+          id?: string
+          in_app_enabled?: boolean
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          category?: Database["public"]["Enums"]["notification_category"]
+          email_enabled?: boolean
+          id?: string
+          in_app_enabled?: boolean
+          sms_enabled?: boolean
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: []
+      }
       notifications: {
         Row: {
           body: string | null
+          category: Database["public"]["Enums"]["notification_category"] | null
           created_at: string
           id: string
           read: boolean | null
@@ -236,6 +369,7 @@ export type Database = {
         }
         Insert: {
           body?: string | null
+          category?: Database["public"]["Enums"]["notification_category"] | null
           created_at?: string
           id?: string
           read?: boolean | null
@@ -245,6 +379,7 @@ export type Database = {
         }
         Update: {
           body?: string | null
+          category?: Database["public"]["Enums"]["notification_category"] | null
           created_at?: string
           id?: string
           read?: boolean | null
@@ -254,11 +389,124 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_members: {
+        Row: {
+          id: string
+          invited_by: string | null
+          joined_at: string
+          org_id: string
+          role: Database["public"]["Enums"]["org_role"]
+          user_id: string
+        }
+        Insert: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          org_id: string
+          role?: Database["public"]["Enums"]["org_role"]
+          user_id: string
+        }
+        Update: {
+          id?: string
+          invited_by?: string | null
+          joined_at?: string
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_role"]
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_members_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      organizations: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          id: string
+          logo_url: string | null
+          name: string
+          plan: Database["public"]["Enums"]["plan_tier"]
+          seat_limit: number
+          slug: string
+          timezone: string
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          logo_url?: string | null
+          name: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          seat_limit?: number
+          slug: string
+          timezone?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          id?: string
+          logo_url?: string | null
+          name?: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          seat_limit?: number
+          slug?: string
+          timezone?: string
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      permissions_overrides: {
+        Row: {
+          allowed: boolean
+          created_at: string
+          id: string
+          org_id: string
+          permission_key: string
+          user_id: string
+        }
+        Insert: {
+          allowed?: boolean
+          created_at?: string
+          id?: string
+          org_id: string
+          permission_key: string
+          user_id: string
+        }
+        Update: {
+          allowed?: boolean
+          created_at?: string
+          id?: string
+          org_id?: string
+          permission_key?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "permissions_overrides_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       profiles: {
         Row: {
           avatar_url: string | null
           clinic_id: string | null
           created_at: string
+          current_org_id: string | null
           date_of_birth: string | null
           department: string | null
           full_name: string | null
@@ -273,6 +521,7 @@ export type Database = {
           avatar_url?: string | null
           clinic_id?: string | null
           created_at?: string
+          current_org_id?: string | null
           date_of_birth?: string | null
           department?: string | null
           full_name?: string | null
@@ -287,6 +536,7 @@ export type Database = {
           avatar_url?: string | null
           clinic_id?: string | null
           created_at?: string
+          current_org_id?: string | null
           date_of_birth?: string | null
           department?: string | null
           full_name?: string | null
@@ -305,6 +555,13 @@ export type Database = {
             referencedRelation: "clinics"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "profiles_current_org_id_fkey"
+            columns: ["current_org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
         ]
       }
       queue_entries: {
@@ -316,6 +573,7 @@ export type Database = {
           doctor_name: string | null
           eta_min: number | null
           id: string
+          organization_id: string | null
           patient_id: string
           position: number
           status: Database["public"]["Enums"]["queue_status"]
@@ -330,6 +588,7 @@ export type Database = {
           doctor_name?: string | null
           eta_min?: number | null
           id?: string
+          organization_id?: string | null
           patient_id: string
           position?: number
           status?: Database["public"]["Enums"]["queue_status"]
@@ -344,6 +603,7 @@ export type Database = {
           doctor_name?: string | null
           eta_min?: number | null
           id?: string
+          organization_id?: string | null
           patient_id?: string
           position?: number
           status?: Database["public"]["Enums"]["queue_status"]
@@ -363,6 +623,13 @@ export type Database = {
             columns: ["doctor_id"]
             isOneToOne: false
             referencedRelation: "doctors_directory"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "queue_entries_organization_id_fkey"
+            columns: ["organization_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
             referencedColumns: ["id"]
           },
         ]
@@ -387,6 +654,94 @@ export type Database = {
           name?: string
         }
         Relationships: []
+      }
+      subscriptions: {
+        Row: {
+          created_at: string
+          current_period_end: string | null
+          id: string
+          org_id: string
+          plan: Database["public"]["Enums"]["plan_tier"]
+          seats: number
+          status: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id: string | null
+          stripe_subscription_id: string | null
+          trial_ends_at: string | null
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          org_id: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          seats?: number
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_period_end?: string | null
+          id?: string
+          org_id?: string
+          plan?: Database["public"]["Enums"]["plan_tier"]
+          seats?: number
+          status?: Database["public"]["Enums"]["subscription_status"]
+          stripe_customer_id?: string | null
+          stripe_subscription_id?: string | null
+          trial_ends_at?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      usage_counters: {
+        Row: {
+          active_users_count: number
+          appointments_count: number
+          id: string
+          org_id: string
+          period_start: string
+          sms_count: number
+          updated_at: string
+        }
+        Insert: {
+          active_users_count?: number
+          appointments_count?: number
+          id?: string
+          org_id: string
+          period_start?: string
+          sms_count?: number
+          updated_at?: string
+        }
+        Update: {
+          active_users_count?: number
+          appointments_count?: number
+          id?: string
+          org_id?: string
+          period_start?: string
+          sms_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "usage_counters_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       user_roles: {
         Row: {
@@ -414,6 +769,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      current_org_id: { Args: never; Returns: string }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -421,7 +777,29 @@ export type Database = {
         }
         Returns: boolean
       }
+      is_org_admin: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
+      is_org_member: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: boolean
+      }
       is_staff: { Args: { _user_id: string }; Returns: boolean }
+      log_audit: {
+        Args: {
+          _action: string
+          _entity_id: string
+          _entity_type: string
+          _metadata?: Json
+          _org_id: string
+        }
+        Returns: string
+      }
+      org_role: {
+        Args: { _org_id: string; _user_id: string }
+        Returns: Database["public"]["Enums"]["org_role"]
+      }
     }
     Enums: {
       app_role: "patient" | "receptionist" | "doctor" | "admin"
@@ -433,7 +811,16 @@ export type Database = {
         | "Completed"
         | "Cancelled"
         | "No Show"
+      notification_category: "appointment" | "queue" | "billing" | "system"
+      org_role: "owner" | "admin" | "member"
+      plan_tier: "trial" | "starter" | "growth" | "scale"
       queue_status: "Waiting" | "Active" | "Completed" | "Delayed"
+      subscription_status:
+        | "trialing"
+        | "active"
+        | "past_due"
+        | "canceled"
+        | "paused"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -571,7 +958,17 @@ export const Constants = {
         "Cancelled",
         "No Show",
       ],
+      notification_category: ["appointment", "queue", "billing", "system"],
+      org_role: ["owner", "admin", "member"],
+      plan_tier: ["trial", "starter", "growth", "scale"],
       queue_status: ["Waiting", "Active", "Completed", "Delayed"],
+      subscription_status: [
+        "trialing",
+        "active",
+        "past_due",
+        "canceled",
+        "paused",
+      ],
     },
   },
 } as const
