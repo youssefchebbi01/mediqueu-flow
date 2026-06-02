@@ -18,6 +18,8 @@ import { useRealtimeTable } from "@/hooks/use-realtime-table";
 import type { Tables } from "@/integrations/supabase/types";
 import { CommandPalette } from "./command-palette";
 import { RouteProgress } from "./route-progress";
+import { OrgSwitcher } from "./org-switcher";
+import { TrialBanner } from "./trial-banner";
 
 type Notif = Tables<"notifications">;
 
@@ -170,6 +172,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
           >
             <Menu className="h-5 w-5" />
           </button>
+          <OrgSwitcher />
           <button
             onClick={() => setPaletteOpen(true)}
             className="group relative hidden h-9 w-full max-w-md items-center gap-2 rounded-lg border border-border bg-muted/40 px-3 text-sm text-muted-foreground transition-colors hover:bg-muted sm:flex"
@@ -228,6 +231,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
         </header>
 
         <main className="px-4 py-6 sm:px-6 lg:px-8">
+          <TrialBanner />
           <div key={path} className="mb-6 animate-fade-up">
             <h1 className="text-2xl font-semibold tracking-tight sm:text-3xl">
               {title}

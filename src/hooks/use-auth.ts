@@ -13,6 +13,7 @@ export interface Profile {
   license_number: string | null;
   department: string | null;
   clinic_id: string | null;
+  current_org_id: string | null;
 }
 
 interface AuthState {
