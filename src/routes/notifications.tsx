@@ -114,7 +114,7 @@ function List({ items, onClick }: { items: Notif[]; onClick: (n: Notif) => void 
 
 function Preferences() {
   const { user } = useAuth();
-  const [prefs, setPrefs] = useS<any[]>([]);
+  const [prefs, setPrefs] = useState<any[]>([]);
   useEffect(() => {
     if (!user) return;
     (async () => {
@@ -125,7 +125,7 @@ function Preferences() {
 
   async function update(p: any, patch: any) {
     await supabase.from("notification_preferences").update(patch).eq("id", p.id);
-    setPrefs(prev => prev.map(x => x.id === p.id ? { ...x, ...patch } : x));
+    setPrefs((prev: any[]) => prev.map((x: any) => x.id === p.id ? { ...x, ...patch } : x));
   }
 
   return (
@@ -135,7 +135,7 @@ function Preferences() {
           <tr><th className="p-3 text-left">Category</th><th className="p-3">Email</th><th className="p-3">SMS</th><th className="p-3">In-app</th></tr>
         </thead>
         <tbody>
-          {prefs.map(p => (
+          {prefs.map((p: any) => (
             <tr key={p.id} className="border-t border-border">
               <td className="p-3 font-medium capitalize">{p.category}</td>
               <td className="p-3 text-center"><Switch checked={p.email_enabled} onCheckedChange={(v) => update(p, { email_enabled: v })} /></td>
