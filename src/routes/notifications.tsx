@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { Bell, CheckCheck, Filter } from "lucide-react";
 import { DashboardShell } from "@/components/mediqueu/dashboard-shell";
 import { Card } from "@/components/ui/card";
@@ -13,7 +13,6 @@ import { useAuth } from "@/hooks/use-auth";
 import { useRealtimeTable } from "@/hooks/use-realtime-table";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
-import { useEffect, useState as useS } from "react";
 
 export const Route = createFileRoute("/notifications")({ component: NotificationsPage });
 
