@@ -13,6 +13,7 @@ import { Route as TeamRouteImport } from './routes/team'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
+import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as PatientRouteImport } from './routes/patient'
 import { Route as OrganizationRouteImport } from './routes/organization'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
@@ -41,6 +42,11 @@ const ReceptionRoute = ReceptionRouteImport.update({
 const QueueRoute = QueueRouteImport.update({
   id: '/queue',
   path: '/queue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PermissionsRoute = PermissionsRouteImport.update({
+  id: '/permissions',
+  path: '/permissions',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PatientRoute = PatientRouteImport.update({
@@ -99,6 +105,7 @@ export interface FileRoutesByFullPath {
   '/onboarding': typeof OnboardingRoute
   '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
+  '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
@@ -114,6 +121,7 @@ export interface FileRoutesByTo {
   '/onboarding': typeof OnboardingRoute
   '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
+  '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
@@ -130,6 +138,7 @@ export interface FileRoutesById {
   '/onboarding': typeof OnboardingRoute
   '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
+  '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/settings': typeof SettingsRoute
@@ -147,6 +156,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/organization'
     | '/patient'
+    | '/permissions'
     | '/queue'
     | '/reception'
     | '/settings'
@@ -162,6 +172,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/organization'
     | '/patient'
+    | '/permissions'
     | '/queue'
     | '/reception'
     | '/settings'
@@ -177,6 +188,7 @@ export interface FileRouteTypes {
     | '/onboarding'
     | '/organization'
     | '/patient'
+    | '/permissions'
     | '/queue'
     | '/reception'
     | '/settings'
@@ -193,6 +205,7 @@ export interface RootRouteChildren {
   OnboardingRoute: typeof OnboardingRoute
   OrganizationRoute: typeof OrganizationRoute
   PatientRoute: typeof PatientRoute
+  PermissionsRoute: typeof PermissionsRoute
   QueueRoute: typeof QueueRoute
   ReceptionRoute: typeof ReceptionRoute
   SettingsRoute: typeof SettingsRoute
@@ -227,6 +240,13 @@ declare module '@tanstack/react-router' {
       path: '/queue'
       fullPath: '/queue'
       preLoaderRoute: typeof QueueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/permissions': {
+      id: '/permissions'
+      path: '/permissions'
+      fullPath: '/permissions'
+      preLoaderRoute: typeof PermissionsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/patient': {
@@ -305,6 +325,7 @@ const rootRouteChildren: RootRouteChildren = {
   OnboardingRoute: OnboardingRoute,
   OrganizationRoute: OrganizationRoute,
   PatientRoute: PatientRoute,
+  PermissionsRoute: PermissionsRoute,
   QueueRoute: QueueRoute,
   ReceptionRoute: ReceptionRoute,
   SettingsRoute: SettingsRoute,
