@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard, CalendarPlus, ListOrdered, Settings, BarChart3,
   Bell, Search, Moon, Sun, LogOut, Menu, X,
-  ShieldCheck,
+  ShieldCheck, Building2, ScrollText, CreditCard, KeyRound,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -48,6 +48,12 @@ const navByRole: Record<string, NavItem[]> = {
     { to: "/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/queue", label: "Queue Monitor", icon: ListOrdered },
     { to: "/team", label: "Team & SMS", icon: ShieldCheck },
+    { to: "/organization", label: "Organization", icon: Building2 },
+    { to: "/permissions", label: "Permissions", icon: ShieldCheck },
+    { to: "/billing", label: "Billing", icon: CreditCard },
+    { to: "/audit", label: "Audit log", icon: ScrollText },
+    { to: "/notifications", label: "Notifications", icon: Bell },
+    { to: "/security", label: "Security", icon: KeyRound },
     { to: "/settings", label: "Clinic Settings", icon: Settings },
   ],
 };
