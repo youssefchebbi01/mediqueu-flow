@@ -389,6 +389,56 @@ export type Database = {
         }
         Relationships: []
       }
+      organization_invitations: {
+        Row: {
+          accepted_at: string | null
+          accepted_by: string | null
+          created_at: string
+          email: string
+          expires_at: string
+          id: string
+          invited_by: string | null
+          org_id: string
+          role: Database["public"]["Enums"]["org_role"]
+          status: Database["public"]["Enums"]["invitation_status"]
+          token: string
+        }
+        Insert: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          org_id: string
+          role?: Database["public"]["Enums"]["org_role"]
+          status?: Database["public"]["Enums"]["invitation_status"]
+          token?: string
+        }
+        Update: {
+          accepted_at?: string | null
+          accepted_by?: string | null
+          created_at?: string
+          email?: string
+          expires_at?: string
+          id?: string
+          invited_by?: string | null
+          org_id?: string
+          role?: Database["public"]["Enums"]["org_role"]
+          status?: Database["public"]["Enums"]["invitation_status"]
+          token?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "organization_invitations_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       organization_members: {
         Row: {
           id: string
@@ -769,6 +819,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      accept_invitation: { Args: { _token: string }; Returns: string }
       current_org_id: { Args: never; Returns: string }
       has_role: {
         Args: {
@@ -811,6 +862,7 @@ export type Database = {
         | "Completed"
         | "Cancelled"
         | "No Show"
+      invitation_status: "pending" | "accepted" | "revoked" | "expired"
       notification_category: "appointment" | "queue" | "billing" | "system"
       org_role: "owner" | "admin" | "member"
       plan_tier: "trial" | "starter" | "growth" | "scale"
@@ -958,6 +1010,7 @@ export const Constants = {
         "Cancelled",
         "No Show",
       ],
+      invitation_status: ["pending", "accepted", "revoked", "expired"],
       notification_category: ["appointment", "queue", "billing", "system"],
       org_role: ["owner", "admin", "member"],
       plan_tier: ["trial", "starter", "growth", "scale"],
