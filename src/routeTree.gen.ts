@@ -21,6 +21,7 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as BookRouteImport } from './routes/book'
+import { Route as BillingRouteImport } from './routes/billing'
 import { Route as AuditRouteImport } from './routes/audit'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
@@ -86,6 +87,11 @@ const BookRoute = BookRouteImport.update({
   path: '/book',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BillingRoute = BillingRouteImport.update({
+  id: '/billing',
+  path: '/billing',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AuditRoute = AuditRouteImport.update({
   id: '/audit',
   path: '/audit',
@@ -112,6 +118,7 @@ export interface FileRoutesByFullPath {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/audit': typeof AuditRoute
+  '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
@@ -130,6 +137,7 @@ export interface FileRoutesByTo {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/audit': typeof AuditRoute
+  '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
@@ -149,6 +157,7 @@ export interface FileRoutesById {
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
   '/audit': typeof AuditRoute
+  '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
@@ -169,6 +178,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/audit'
+    | '/billing'
     | '/book'
     | '/doctor'
     | '/login'
@@ -187,6 +197,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/audit'
+    | '/billing'
     | '/book'
     | '/doctor'
     | '/login'
@@ -205,6 +216,7 @@ export interface FileRouteTypes {
     | '/admin'
     | '/analytics'
     | '/audit'
+    | '/billing'
     | '/book'
     | '/doctor'
     | '/login'
@@ -224,6 +236,7 @@ export interface RootRouteChildren {
   AdminRoute: typeof AdminRoute
   AnalyticsRoute: typeof AnalyticsRoute
   AuditRoute: typeof AuditRoute
+  BillingRoute: typeof BillingRoute
   BookRoute: typeof BookRoute
   DoctorRoute: typeof DoctorRoute
   LoginRoute: typeof LoginRoute
@@ -324,6 +337,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof BookRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/billing': {
+      id: '/billing'
+      path: '/billing'
+      fullPath: '/billing'
+      preLoaderRoute: typeof BillingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/audit': {
       id: '/audit'
       path: '/audit'
@@ -360,6 +380,7 @@ const rootRouteChildren: RootRouteChildren = {
   AdminRoute: AdminRoute,
   AnalyticsRoute: AnalyticsRoute,
   AuditRoute: AuditRoute,
+  BillingRoute: BillingRoute,
   BookRoute: BookRoute,
   DoctorRoute: DoctorRoute,
   LoginRoute: LoginRoute,
@@ -376,3 +397,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
