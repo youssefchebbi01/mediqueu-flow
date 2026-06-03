@@ -14,6 +14,7 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as PatientRouteImport } from './routes/patient'
+import { Route as OrganizationRouteImport } from './routes/organization'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as DoctorRouteImport } from './routes/doctor'
@@ -45,6 +46,11 @@ const QueueRoute = QueueRouteImport.update({
 const PatientRoute = PatientRouteImport.update({
   id: '/patient',
   path: '/patient',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const OrganizationRoute = OrganizationRouteImport.update({
+  id: '/organization',
+  path: '/organization',
   getParentRoute: () => rootRouteImport,
 } as any)
 const OnboardingRoute = OnboardingRouteImport.update({
@@ -91,6 +97,7 @@ export interface FileRoutesByFullPath {
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
@@ -105,6 +112,7 @@ export interface FileRoutesByTo {
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
@@ -120,6 +128,7 @@ export interface FileRoutesById {
   '/doctor': typeof DoctorRoute
   '/login': typeof LoginRoute
   '/onboarding': typeof OnboardingRoute
+  '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
@@ -136,6 +145,7 @@ export interface FileRouteTypes {
     | '/doctor'
     | '/login'
     | '/onboarding'
+    | '/organization'
     | '/patient'
     | '/queue'
     | '/reception'
@@ -150,6 +160,7 @@ export interface FileRouteTypes {
     | '/doctor'
     | '/login'
     | '/onboarding'
+    | '/organization'
     | '/patient'
     | '/queue'
     | '/reception'
@@ -164,6 +175,7 @@ export interface FileRouteTypes {
     | '/doctor'
     | '/login'
     | '/onboarding'
+    | '/organization'
     | '/patient'
     | '/queue'
     | '/reception'
@@ -179,6 +191,7 @@ export interface RootRouteChildren {
   DoctorRoute: typeof DoctorRoute
   LoginRoute: typeof LoginRoute
   OnboardingRoute: typeof OnboardingRoute
+  OrganizationRoute: typeof OrganizationRoute
   PatientRoute: typeof PatientRoute
   QueueRoute: typeof QueueRoute
   ReceptionRoute: typeof ReceptionRoute
@@ -221,6 +234,13 @@ declare module '@tanstack/react-router' {
       path: '/patient'
       fullPath: '/patient'
       preLoaderRoute: typeof PatientRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/organization': {
+      id: '/organization'
+      path: '/organization'
+      fullPath: '/organization'
+      preLoaderRoute: typeof OrganizationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/onboarding': {
@@ -283,6 +303,7 @@ const rootRouteChildren: RootRouteChildren = {
   DoctorRoute: DoctorRoute,
   LoginRoute: LoginRoute,
   OnboardingRoute: OnboardingRoute,
+  OrganizationRoute: OrganizationRoute,
   PatientRoute: PatientRoute,
   QueueRoute: QueueRoute,
   ReceptionRoute: ReceptionRoute,
@@ -292,3 +313,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
