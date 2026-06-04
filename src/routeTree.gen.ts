@@ -148,6 +148,7 @@ export interface FileRoutesByFullPath {
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/reports': typeof ReportsRoute
+  '/reports': typeof ReportsRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -169,6 +170,7 @@ export interface FileRoutesByTo {
   '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/reports': typeof ReportsRoute
   '/reports': typeof ReportsRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
@@ -192,6 +194,7 @@ export interface FileRoutesById {
   '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/reports': typeof ReportsRoute
   '/reports': typeof ReportsRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
@@ -325,6 +328,13 @@ declare module '@tanstack/react-router' {
       path: '/reception'
       fullPath: '/reception'
       preLoaderRoute: typeof ReceptionRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/queue': {
