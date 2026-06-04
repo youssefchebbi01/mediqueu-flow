@@ -12,6 +12,7 @@ import { Route as rootRouteImport } from './routes/__root'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as PermissionsRouteImport } from './routes/permissions'
@@ -42,6 +43,11 @@ const SettingsRoute = SettingsRouteImport.update({
 const SecurityRoute = SecurityRouteImport.update({
   id: '/security',
   path: '/security',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ReportsRoute = ReportsRouteImport.update({
+  id: '/reports',
+  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ReceptionRoute = ReceptionRouteImport.update({
@@ -141,6 +147,7 @@ export interface FileRoutesByFullPath {
   '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/reports': typeof ReportsRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -162,6 +169,7 @@ export interface FileRoutesByTo {
   '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/reports': typeof ReportsRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -184,6 +192,7 @@ export interface FileRoutesById {
   '/permissions': typeof PermissionsRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
+  '/reports': typeof ReportsRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -207,6 +216,7 @@ export interface FileRouteTypes {
     | '/permissions'
     | '/queue'
     | '/reception'
+    | '/reports'
     | '/security'
     | '/settings'
     | '/team'
@@ -228,6 +238,7 @@ export interface FileRouteTypes {
     | '/permissions'
     | '/queue'
     | '/reception'
+    | '/reports'
     | '/security'
     | '/settings'
     | '/team'
@@ -249,6 +260,7 @@ export interface FileRouteTypes {
     | '/permissions'
     | '/queue'
     | '/reception'
+    | '/reports'
     | '/security'
     | '/settings'
     | '/team'
@@ -271,6 +283,7 @@ export interface RootRouteChildren {
   PermissionsRoute: typeof PermissionsRoute
   QueueRoute: typeof QueueRoute
   ReceptionRoute: typeof ReceptionRoute
+  ReportsRoute: typeof ReportsRoute
   SecurityRoute: typeof SecurityRoute
   SettingsRoute: typeof SettingsRoute
   TeamRoute: typeof TeamRoute
@@ -298,6 +311,13 @@ declare module '@tanstack/react-router' {
       path: '/security'
       fullPath: '/security'
       preLoaderRoute: typeof SecurityRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/reports': {
+      id: '/reports'
+      path: '/reports'
+      fullPath: '/reports'
+      preLoaderRoute: typeof ReportsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/reception': {
@@ -431,6 +451,7 @@ const rootRouteChildren: RootRouteChildren = {
   PermissionsRoute: PermissionsRoute,
   QueueRoute: QueueRoute,
   ReceptionRoute: ReceptionRoute,
+  ReportsRoute: ReportsRoute,
   SecurityRoute: SecurityRoute,
   SettingsRoute: SettingsRoute,
   TeamRoute: TeamRoute,
