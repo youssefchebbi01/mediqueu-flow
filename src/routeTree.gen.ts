@@ -14,7 +14,6 @@ import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SecurityRouteImport } from './routes/security'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ReceptionRouteImport } from './routes/reception'
-import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as QueueRouteImport } from './routes/queue'
 import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as PatientRouteImport } from './routes/patient'
@@ -54,11 +53,6 @@ const ReportsRoute = ReportsRouteImport.update({
 const ReceptionRoute = ReceptionRouteImport.update({
   id: '/reception',
   path: '/reception',
-  getParentRoute: () => rootRouteImport,
-} as any)
-const ReportsRoute = ReportsRouteImport.update({
-  id: '/reports',
-  path: '/reports',
   getParentRoute: () => rootRouteImport,
 } as any)
 const QueueRoute = QueueRouteImport.update({
