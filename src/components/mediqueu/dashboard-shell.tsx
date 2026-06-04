@@ -3,7 +3,7 @@ import { useEffect, useState, type ReactNode } from "react";
 import {
   LayoutDashboard, CalendarPlus, ListOrdered, Settings, BarChart3,
   Bell, Search, Moon, Sun, LogOut, Menu, X,
-  ShieldCheck, Building2, ScrollText, CreditCard, KeyRound,
+  ShieldCheck, Building2, ScrollText, CreditCard, KeyRound, FileText,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -46,6 +46,7 @@ const navByRole: Record<string, NavItem[]> = {
   admin: [
     { to: "/admin", label: "Overview", icon: LayoutDashboard },
     { to: "/analytics", label: "Analytics", icon: BarChart3 },
+    { to: "/reports", label: "Reports", icon: FileText },
     { to: "/queue", label: "Queue Monitor", icon: ListOrdered },
     { to: "/team", label: "Team & SMS", icon: ShieldCheck },
     { to: "/organization", label: "Organization", icon: Building2 },
