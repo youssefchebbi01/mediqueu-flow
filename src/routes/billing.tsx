@@ -1,3 +1,4 @@
+import { useRequireRole } from "@/hooks/use-auth";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { CreditCard, Check, Sparkles } from "lucide-react";
@@ -20,6 +21,8 @@ const PLANS = [
 ];
 
 function BillingPage() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const { org } = useCurrentOrg();
   const [sub, setSub] = useState<any>(null);
   const [usage, setUsage] = useState<any>(null);

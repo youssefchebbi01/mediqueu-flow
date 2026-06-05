@@ -8,13 +8,15 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { EmptyState } from "@/components/mediqueu/empty-state";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useRequireRole } from "@/hooks/use-auth";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/security")({ component: SecurityPage });
 
 function SecurityPage() {
+  const __ok = useRequireRole(["patient", "receptionist", "doctor", "admin"]);
+  if (!__ok) return null;
   const { user, session } = useAuth();
   const [events, setEvents] = useState<any[]>([]);
   const [pw, setPw] = useState("");

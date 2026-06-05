@@ -1,3 +1,4 @@
+import { useRequireRole } from "@/hooks/use-auth";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState } from "react";
 import { DashboardShell } from "@/components/mediqueu/dashboard-shell";
@@ -33,6 +34,8 @@ const TEMPLATES = [
 ];
 
 function Reports() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const [schedules, setSchedules] = useState<Schedule[]>([
     { id: "s1", name: "Daily ops digest", cadence: "daily", format: "pdf", recipients: "ops@clinic.com", enabled: true },
     { id: "s2", name: "Weekly KPIs", cadence: "weekly", format: "pdf", recipients: "leads@clinic.com", enabled: true },

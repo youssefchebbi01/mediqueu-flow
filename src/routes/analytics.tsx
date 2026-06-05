@@ -1,3 +1,4 @@
+import { useRequireRole } from "@/hooks/use-auth";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import {
@@ -43,6 +44,8 @@ const PRESETS: { key: PresetKey; label: string }[] = [
 ];
 
 function Analytics() {
+  const __ok = useRequireRole(["admin", "doctor"]);
+  if (!__ok) return null;
   const { org } = useCurrentOrg();
   const [preset, setPreset] = useState<PresetKey>("30d");
   const [loading, setLoading] = useState(true);

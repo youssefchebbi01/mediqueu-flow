@@ -13,7 +13,7 @@ import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { EmptyState } from "@/components/mediqueu/empty-state";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useRequireRole } from "@/hooks/use-auth";
 import { useCurrentOrg } from "@/hooks/use-current-org";
 import { supabase } from "@/integrations/supabase/client";
 import { logAudit } from "@/lib/audit";
@@ -38,6 +38,8 @@ type Invite = {
 type Clinic = { id: string; name: string; address: string | null; phone: string | null; timezone: string | null };
 
 function OrganizationPage() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const { user } = useAuth();
   const { org, refresh } = useCurrentOrg();
 

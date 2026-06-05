@@ -1,3 +1,4 @@
+import { useRequireRole } from "@/hooks/use-auth";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useState } from "react";
 import { ShieldCheck, Loader2 } from "lucide-react";
@@ -56,6 +57,8 @@ type Member = { id: string; user_id: string; role: Role; full_name: string | nul
 type Override = { user_id: string; permission_key: string; allowed: boolean };
 
 function PermissionsPage() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const { org } = useCurrentOrg();
   const [members, setMembers] = useState<Member[]>([]);
   const [overrides, setOverrides] = useState<Override[]>([]);

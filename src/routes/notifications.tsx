@@ -9,7 +9,7 @@ import { Switch } from "@/components/ui/switch";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Input } from "@/components/ui/input";
 import { EmptyState } from "@/components/mediqueu/empty-state";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useRequireRole } from "@/hooks/use-auth";
 import { useRealtimeTable } from "@/hooks/use-realtime-table";
 import { supabase } from "@/integrations/supabase/client";
 import type { Tables } from "@/integrations/supabase/types";
@@ -21,6 +21,8 @@ type Notif = Tables<"notifications">;
 const CATEGORIES = ["appointment","queue","billing","system"] as const;
 
 function NotificationsPage() {
+  const __ok = useRequireRole(["patient", "receptionist", "doctor", "admin"]);
+  if (!__ok) return null;
   const { user } = useAuth();
   const { rows: notifs } = useRealtimeTable<Notif>("notifications", {
     filter: user ? { column: "user_id", value: user.id } : null,
