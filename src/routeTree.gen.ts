@@ -25,6 +25,7 @@ import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as ImportExportRouteImport } from './routes/import-export'
 import { Route as DoctorRouteImport } from './routes/doctor'
+import { Route as BrandingRouteImport } from './routes/branding'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as AuditRouteImport } from './routes/audit'
@@ -114,6 +115,11 @@ const DoctorRoute = DoctorRouteImport.update({
   path: '/doctor',
   getParentRoute: () => rootRouteImport,
 } as any)
+const BrandingRoute = BrandingRouteImport.update({
+  id: '/branding',
+  path: '/branding',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const BookRoute = BookRouteImport.update({
   id: '/book',
   path: '/book',
@@ -163,6 +169,7 @@ export interface FileRoutesByFullPath {
   '/audit': typeof AuditRoute
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
+  '/branding': typeof BrandingRoute
   '/doctor': typeof DoctorRoute
   '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
@@ -189,6 +196,7 @@ export interface FileRoutesByTo {
   '/audit': typeof AuditRoute
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
+  '/branding': typeof BrandingRoute
   '/doctor': typeof DoctorRoute
   '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
@@ -216,6 +224,7 @@ export interface FileRoutesById {
   '/audit': typeof AuditRoute
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
+  '/branding': typeof BrandingRoute
   '/doctor': typeof DoctorRoute
   '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
@@ -244,6 +253,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/billing'
     | '/book'
+    | '/branding'
     | '/doctor'
     | '/import-export'
     | '/integrations'
@@ -270,6 +280,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/billing'
     | '/book'
+    | '/branding'
     | '/doctor'
     | '/import-export'
     | '/integrations'
@@ -296,6 +307,7 @@ export interface FileRouteTypes {
     | '/audit'
     | '/billing'
     | '/book'
+    | '/branding'
     | '/doctor'
     | '/import-export'
     | '/integrations'
@@ -323,6 +335,7 @@ export interface RootRouteChildren {
   AuditRoute: typeof AuditRoute
   BillingRoute: typeof BillingRoute
   BookRoute: typeof BookRoute
+  BrandingRoute: typeof BrandingRoute
   DoctorRoute: typeof DoctorRoute
   ImportExportRoute: typeof ImportExportRoute
   IntegrationsRoute: typeof IntegrationsRoute
@@ -456,6 +469,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof DoctorRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/branding': {
+      id: '/branding'
+      path: '/branding'
+      fullPath: '/branding'
+      preLoaderRoute: typeof BrandingRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/book': {
       id: '/book'
       path: '/book'
@@ -523,6 +543,7 @@ const rootRouteChildren: RootRouteChildren = {
   AuditRoute: AuditRoute,
   BillingRoute: BillingRoute,
   BookRoute: BookRoute,
+  BrandingRoute: BrandingRoute,
   DoctorRoute: DoctorRoute,
   ImportExportRoute: ImportExportRoute,
   IntegrationsRoute: IntegrationsRoute,
