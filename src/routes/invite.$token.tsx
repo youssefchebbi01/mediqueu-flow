@@ -19,11 +19,10 @@ function InvitePage() {
 
   useEffect(() => {
     (async () => {
-      const { data, error } = await (supabase as any).from("organization_invitations")
-        .select("id, email, role, status, expires_at, org_id, organizations:org_id(name)")
-        .eq("token", token).maybeSingle();
-      if (error || !data) return setErr("Invitation not found");
-      setInv(data);
+      const { data, error } = await (supabase as any).rpc("get_invitation_by_token", { _token: token });
+      const row = Array.isArray(data) ? data[0] : data;
+      if (error || !row) return setErr("Invitation not found");
+      setInv({ ...row, organizations: { name: row.org_name } });
     })();
   }, [token]);
 

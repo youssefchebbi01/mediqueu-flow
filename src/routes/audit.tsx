@@ -1,3 +1,4 @@
+import { useRequireRole } from "@/hooks/use-auth";
 import { createFileRoute } from "@tanstack/react-router";
 import { useEffect, useMemo, useState } from "react";
 import { ScrollText, Search } from "lucide-react";
@@ -18,6 +19,8 @@ type Log = {
 };
 
 function AuditPage() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const { org } = useCurrentOrg();
   const [logs, setLogs] = useState<Log[]>([]);
   const [loading, setLoading] = useState(true);

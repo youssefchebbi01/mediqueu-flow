@@ -14,7 +14,7 @@ import { toast } from "sonner";
 import { Loader2, Send, ShieldCheck, Trash2, UserPlus } from "lucide-react";
 import { listTeam, assignRole, removeRole, type TeamMember } from "@/lib/team.functions";
 import { sendSms } from "@/lib/sms.functions";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useRequireRole } from "@/hooks/use-auth";
 
 export const Route = createFileRoute("/team")({
   head: () => ({ meta: [{ title: "Team — MediQueu" }] }),
@@ -30,6 +30,8 @@ const ROLE_STYLES: Record<string, string> = {
 };
 
 function TeamPage() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const { role: myRole, loading } = useAuth();
   const list = useServerFn(listTeam);
   const assign = useServerFn(assignRole);

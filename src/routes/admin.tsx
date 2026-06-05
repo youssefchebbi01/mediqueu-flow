@@ -1,3 +1,4 @@
+import { useRequireRole } from "@/hooks/use-auth";
 import { createFileRoute, Link } from "@tanstack/react-router";
 import { DashboardShell, StatCard } from "@/components/mediqueu/dashboard-shell";
 import { analytics } from "@/lib/mock-data";
@@ -27,6 +28,8 @@ type Specialty = Tables<"specialties">;
 type Appt = Tables<"appointments">;
 
 function Admin() {
+  const __ok = useRequireRole(["admin"]);
+  if (!__ok) return null;
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [docOpen, setDocOpen] = useState(false);

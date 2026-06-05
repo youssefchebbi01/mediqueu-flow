@@ -816,11 +816,66 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      subscriptions_public: {
+        Row: {
+          created_at: string | null
+          current_period_end: string | null
+          id: string | null
+          org_id: string | null
+          plan: Database["public"]["Enums"]["plan_tier"] | null
+          seats: number | null
+          status: Database["public"]["Enums"]["subscription_status"] | null
+          trial_ends_at: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string | null
+          org_id?: string | null
+          plan?: Database["public"]["Enums"]["plan_tier"] | null
+          seats?: number | null
+          status?: Database["public"]["Enums"]["subscription_status"] | null
+          trial_ends_at?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          created_at?: string | null
+          current_period_end?: string | null
+          id?: string | null
+          org_id?: string | null
+          plan?: Database["public"]["Enums"]["plan_tier"] | null
+          seats?: number | null
+          status?: Database["public"]["Enums"]["subscription_status"] | null
+          trial_ends_at?: string | null
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "subscriptions_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: true
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Functions: {
       accept_invitation: { Args: { _token: string }; Returns: string }
       current_org_id: { Args: never; Returns: string }
+      get_invitation_by_token: {
+        Args: { _token: string }
+        Returns: {
+          email: string
+          expires_at: string
+          id: string
+          org_id: string
+          org_name: string
+          role: Database["public"]["Enums"]["org_role"]
+          status: string
+        }[]
+      }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]

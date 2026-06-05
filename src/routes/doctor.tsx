@@ -2,7 +2,7 @@ import { createFileRoute } from "@tanstack/react-router";
 import { DashboardShell, StatCard } from "@/components/mediqueu/dashboard-shell";
 import { StatusBadge } from "@/components/mediqueu/status-badge";
 import { useRealtimeTable } from "@/hooks/use-realtime-table";
-import { useAuth } from "@/hooks/use-auth";
+import { useAuth, useRequireRole } from "@/hooks/use-auth";
 import { Users, Clock, CheckCircle2, FileText, Pause, Play } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -22,6 +22,8 @@ export const Route = createFileRoute("/doctor")({
 });
 
 function Doctor() {
+  const __ok = useRequireRole(["doctor", "admin"]);
+  if (!__ok) return null;
   const { user, profile } = useAuth();
   const [paused, setPaused] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState("");
