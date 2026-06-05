@@ -14,6 +14,59 @@ export type Database = {
   }
   public: {
     Tables: {
+      api_keys: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          expires_at: string | null
+          hashed_key: string
+          id: string
+          last_used_at: string | null
+          name: string
+          org_id: string
+          prefix: string
+          revoked_at: string | null
+          scopes: string[]
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          hashed_key: string
+          id?: string
+          last_used_at?: string | null
+          name: string
+          org_id: string
+          prefix: string
+          revoked_at?: string | null
+          scopes?: string[]
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          expires_at?: string | null
+          hashed_key?: string
+          id?: string
+          last_used_at?: string | null
+          name?: string
+          org_id?: string
+          prefix?: string
+          revoked_at?: string | null
+          scopes?: string[]
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "api_keys_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       appointments: {
         Row: {
           clinic_id: string | null
@@ -118,6 +171,62 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "audit_logs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      calendar_integrations: {
+        Row: {
+          created_at: string
+          external_account: string | null
+          id: string
+          last_error: string | null
+          last_sync_at: string | null
+          metadata: Json
+          org_id: string
+          provider: string
+          scopes: string[]
+          status: string
+          sync_direction: string
+          updated_at: string
+          user_id: string
+        }
+        Insert: {
+          created_at?: string
+          external_account?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          metadata?: Json
+          org_id: string
+          provider: string
+          scopes?: string[]
+          status?: string
+          sync_direction?: string
+          updated_at?: string
+          user_id: string
+        }
+        Update: {
+          created_at?: string
+          external_account?: string | null
+          id?: string
+          last_error?: string | null
+          last_sync_at?: string | null
+          metadata?: Json
+          org_id?: string
+          provider?: string
+          scopes?: string[]
+          status?: string
+          sync_direction?: string
+          updated_at?: string
+          user_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "calendar_integrations_org_id_fkey"
             columns: ["org_id"]
             isOneToOne: false
             referencedRelation: "organizations"
@@ -299,6 +408,56 @@ export type Database = {
           },
         ]
       }
+      import_jobs: {
+        Row: {
+          created_at: string
+          created_by: string | null
+          errors: Json
+          failed_rows: number
+          filename: string | null
+          id: string
+          kind: string
+          org_id: string
+          status: string
+          succeeded_rows: number
+          total_rows: number
+        }
+        Insert: {
+          created_at?: string
+          created_by?: string | null
+          errors?: Json
+          failed_rows?: number
+          filename?: string | null
+          id?: string
+          kind: string
+          org_id: string
+          status?: string
+          succeeded_rows?: number
+          total_rows?: number
+        }
+        Update: {
+          created_at?: string
+          created_by?: string | null
+          errors?: Json
+          failed_rows?: number
+          filename?: string | null
+          id?: string
+          kind?: string
+          org_id?: string
+          status?: string
+          succeeded_rows?: number
+          total_rows?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "import_jobs_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       login_events: {
         Row: {
           created_at: string
@@ -476,43 +635,61 @@ export type Database = {
       }
       organizations: {
         Row: {
+          accent_color: string | null
+          appointment_retention_days: number
+          audit_retention_days: number
           created_at: string
           created_by: string | null
           id: string
           logo_url: string | null
           name: string
           plan: Database["public"]["Enums"]["plan_tier"]
+          primary_color: string | null
           seat_limit: number
           slug: string
+          support_email: string | null
           timezone: string
           trial_ends_at: string | null
           updated_at: string
+          website_url: string | null
         }
         Insert: {
+          accent_color?: string | null
+          appointment_retention_days?: number
+          audit_retention_days?: number
           created_at?: string
           created_by?: string | null
           id?: string
           logo_url?: string | null
           name: string
           plan?: Database["public"]["Enums"]["plan_tier"]
+          primary_color?: string | null
           seat_limit?: number
           slug: string
+          support_email?: string | null
           timezone?: string
           trial_ends_at?: string | null
           updated_at?: string
+          website_url?: string | null
         }
         Update: {
+          accent_color?: string | null
+          appointment_retention_days?: number
+          audit_retention_days?: number
           created_at?: string
           created_by?: string | null
           id?: string
           logo_url?: string | null
           name?: string
           plan?: Database["public"]["Enums"]["plan_tier"]
+          primary_color?: string | null
           seat_limit?: number
           slug?: string
+          support_email?: string | null
           timezone?: string
           trial_ends_at?: string | null
           updated_at?: string
+          website_url?: string | null
         }
         Relationships: []
       }
@@ -813,6 +990,107 @@ export type Database = {
           user_id?: string
         }
         Relationships: []
+      }
+      webhook_deliveries: {
+        Row: {
+          attempt: number
+          created_at: string
+          event: string
+          id: string
+          org_id: string
+          payload: Json
+          response_excerpt: string | null
+          status_code: number | null
+          succeeded: boolean
+          webhook_id: string
+        }
+        Insert: {
+          attempt?: number
+          created_at?: string
+          event: string
+          id?: string
+          org_id: string
+          payload?: Json
+          response_excerpt?: string | null
+          status_code?: number | null
+          succeeded?: boolean
+          webhook_id: string
+        }
+        Update: {
+          attempt?: number
+          created_at?: string
+          event?: string
+          id?: string
+          org_id?: string
+          payload?: Json
+          response_excerpt?: string | null
+          status_code?: number | null
+          succeeded?: boolean
+          webhook_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhook_deliveries_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "webhook_deliveries_webhook_id_fkey"
+            columns: ["webhook_id"]
+            isOneToOne: false
+            referencedRelation: "webhooks"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      webhooks: {
+        Row: {
+          active: boolean
+          created_at: string
+          created_by: string | null
+          events: string[]
+          id: string
+          name: string
+          org_id: string
+          secret: string
+          target_url: string
+          updated_at: string
+        }
+        Insert: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          events?: string[]
+          id?: string
+          name: string
+          org_id: string
+          secret?: string
+          target_url: string
+          updated_at?: string
+        }
+        Update: {
+          active?: boolean
+          created_at?: string
+          created_by?: string | null
+          events?: string[]
+          id?: string
+          name?: string
+          org_id?: string
+          secret?: string
+          target_url?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "webhooks_org_id_fkey"
+            columns: ["org_id"]
+            isOneToOne: false
+            referencedRelation: "organizations"
+            referencedColumns: ["id"]
+          },
+        ]
       }
     }
     Views: {

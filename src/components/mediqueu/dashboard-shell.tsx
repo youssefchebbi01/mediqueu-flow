@@ -4,6 +4,7 @@ import {
   LayoutDashboard, CalendarPlus, ListOrdered, Settings, BarChart3,
   Bell, Search, Moon, Sun, LogOut, Menu, X,
   ShieldCheck, Building2, ScrollText, CreditCard, KeyRound, FileText,
+  Plug, Webhook, Upload, Palette,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -50,8 +51,13 @@ const navByRole: Record<string, NavItem[]> = {
     { to: "/queue", label: "Queue Monitor", icon: ListOrdered },
     { to: "/team", label: "Team & SMS", icon: ShieldCheck },
     { to: "/organization", label: "Organization", icon: Building2 },
+    { to: "/branding", label: "Branding", icon: Palette },
     { to: "/permissions", label: "Permissions", icon: ShieldCheck },
     { to: "/billing", label: "Billing", icon: CreditCard },
+    { to: "/integrations", label: "Integrations", icon: Plug },
+    { to: "/api-platform", label: "API", icon: KeyRound },
+    { to: "/webhooks", label: "Webhooks", icon: Webhook },
+    { to: "/import-export", label: "Import & Export", icon: Upload },
     { to: "/audit", label: "Audit log", icon: ScrollText },
     { to: "/notifications", label: "Notifications", icon: Bell },
     { to: "/security", label: "Security", icon: KeyRound },
