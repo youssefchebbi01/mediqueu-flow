@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import type { Session, User } from "@supabase/supabase-js";
 import { supabase } from "@/integrations/supabase/client";
 import type { Role } from "@/lib/mock-data";
+import { useNavigate } from "@tanstack/react-router";
 
 export interface Profile {
   id: string;
@@ -96,3 +97,27 @@ export const dashboardPath: Record<Role, string> = {
   doctor: "/doctor",
   admin: "/admin",
 };
+
+/**
+ * Client-side route guard. Redirects unauthenticated users to /login and
+ * users whose role is not in `allowed` to their default dashboard.
+ * Returns true once the auth state has loaded and the user is authorized.
+ * Server-side RLS remains the source of truth — this prevents UI exposure
+ * and avoids issuing queries on behalf of unauthorized viewers.
+ */
+export function useRequireRole(allowed: Role[]): boolean {
+  const { user, role, loading } = useAuth();
+  const navigate = useNavigate();
+  useEffect(() => {
+    if (loading) return;
+    if (!user) {
+      navigate({ to: "/login" });
+      return;
+    }
+    if (!role || !allowed.includes(role)) {
+      navigate({ to: dashboardPath[role ?? "patient"] });
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [loading, user, role]);
+  return !loading && !!user && !!role && allowed.includes(role);
+}
