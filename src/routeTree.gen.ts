@@ -21,10 +21,12 @@ import { Route as OrganizationRouteImport } from './routes/organization'
 import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as BillingRouteImport } from './routes/billing'
 import { Route as AuditRouteImport } from './routes/audit'
+import { Route as ApiPlatformRouteImport } from './routes/api-platform'
 import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -90,6 +92,11 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const IntegrationsRoute = IntegrationsRouteImport.update({
+  id: '/integrations',
+  path: '/integrations',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoctorRoute = DoctorRouteImport.update({
   id: '/doctor',
   path: '/doctor',
@@ -108,6 +115,11 @@ const BillingRoute = BillingRouteImport.update({
 const AuditRoute = AuditRouteImport.update({
   id: '/audit',
   path: '/audit',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ApiPlatformRoute = ApiPlatformRouteImport.update({
+  id: '/api-platform',
+  path: '/api-platform',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AnalyticsRoute = AnalyticsRouteImport.update({
@@ -135,10 +147,12 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
+  '/api-platform': typeof ApiPlatformRoute
   '/audit': typeof AuditRoute
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
+  '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
@@ -157,10 +171,12 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
+  '/api-platform': typeof ApiPlatformRoute
   '/audit': typeof AuditRoute
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
+  '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
@@ -180,10 +196,12 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/analytics': typeof AnalyticsRoute
+  '/api-platform': typeof ApiPlatformRoute
   '/audit': typeof AuditRoute
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
+  '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
   '/onboarding': typeof OnboardingRoute
@@ -204,10 +222,12 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/analytics'
+    | '/api-platform'
     | '/audit'
     | '/billing'
     | '/book'
     | '/doctor'
+    | '/integrations'
     | '/login'
     | '/notifications'
     | '/onboarding'
@@ -226,10 +246,12 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/analytics'
+    | '/api-platform'
     | '/audit'
     | '/billing'
     | '/book'
     | '/doctor'
+    | '/integrations'
     | '/login'
     | '/notifications'
     | '/onboarding'
@@ -248,10 +270,12 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/analytics'
+    | '/api-platform'
     | '/audit'
     | '/billing'
     | '/book'
     | '/doctor'
+    | '/integrations'
     | '/login'
     | '/notifications'
     | '/onboarding'
@@ -271,10 +295,12 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AnalyticsRoute: typeof AnalyticsRoute
+  ApiPlatformRoute: typeof ApiPlatformRoute
   AuditRoute: typeof AuditRoute
   BillingRoute: typeof BillingRoute
   BookRoute: typeof BookRoute
   DoctorRoute: typeof DoctorRoute
+  IntegrationsRoute: typeof IntegrationsRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
   OnboardingRoute: typeof OnboardingRoute
@@ -376,6 +402,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/integrations': {
+      id: '/integrations'
+      path: '/integrations'
+      fullPath: '/integrations'
+      preLoaderRoute: typeof IntegrationsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doctor': {
       id: '/doctor'
       path: '/doctor'
@@ -402,6 +435,13 @@ declare module '@tanstack/react-router' {
       path: '/audit'
       fullPath: '/audit'
       preLoaderRoute: typeof AuditRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/api-platform': {
+      id: '/api-platform'
+      path: '/api-platform'
+      fullPath: '/api-platform'
+      preLoaderRoute: typeof ApiPlatformRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/analytics': {
@@ -439,10 +479,12 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AnalyticsRoute: AnalyticsRoute,
+  ApiPlatformRoute: ApiPlatformRoute,
   AuditRoute: AuditRoute,
   BillingRoute: BillingRoute,
   BookRoute: BookRoute,
   DoctorRoute: DoctorRoute,
+  IntegrationsRoute: IntegrationsRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
   OnboardingRoute: OnboardingRoute,
@@ -460,3 +502,13 @@ const rootRouteChildren: RootRouteChildren = {
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)
   ._addFileTypes<FileRouteTypes>()
+
+import type { getRouter } from './router.tsx'
+import type { startInstance } from './start.ts'
+declare module '@tanstack/react-start' {
+  interface Register {
+    ssr: true
+    router: Awaited<ReturnType<typeof getRouter>>
+    config: Awaited<ReturnType<typeof startInstance.getOptions>>
+  }
+}
