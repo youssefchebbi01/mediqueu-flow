@@ -23,6 +23,7 @@ import { Route as OnboardingRouteImport } from './routes/onboarding'
 import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
+import { Route as ImportExportRouteImport } from './routes/import-export'
 import { Route as DoctorRouteImport } from './routes/doctor'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as BillingRouteImport } from './routes/billing'
@@ -103,6 +104,11 @@ const IntegrationsRoute = IntegrationsRouteImport.update({
   path: '/integrations',
   getParentRoute: () => rootRouteImport,
 } as any)
+const ImportExportRoute = ImportExportRouteImport.update({
+  id: '/import-export',
+  path: '/import-export',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoctorRoute = DoctorRouteImport.update({
   id: '/doctor',
   path: '/doctor',
@@ -158,6 +164,7 @@ export interface FileRoutesByFullPath {
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
+  '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -183,6 +190,7 @@ export interface FileRoutesByTo {
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
+  '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -209,6 +217,7 @@ export interface FileRoutesById {
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/doctor': typeof DoctorRoute
+  '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
   '/notifications': typeof NotificationsRoute
@@ -236,6 +245,7 @@ export interface FileRouteTypes {
     | '/billing'
     | '/book'
     | '/doctor'
+    | '/import-export'
     | '/integrations'
     | '/login'
     | '/notifications'
@@ -261,6 +271,7 @@ export interface FileRouteTypes {
     | '/billing'
     | '/book'
     | '/doctor'
+    | '/import-export'
     | '/integrations'
     | '/login'
     | '/notifications'
@@ -286,6 +297,7 @@ export interface FileRouteTypes {
     | '/billing'
     | '/book'
     | '/doctor'
+    | '/import-export'
     | '/integrations'
     | '/login'
     | '/notifications'
@@ -312,6 +324,7 @@ export interface RootRouteChildren {
   BillingRoute: typeof BillingRoute
   BookRoute: typeof BookRoute
   DoctorRoute: typeof DoctorRoute
+  ImportExportRoute: typeof ImportExportRoute
   IntegrationsRoute: typeof IntegrationsRoute
   LoginRoute: typeof LoginRoute
   NotificationsRoute: typeof NotificationsRoute
@@ -429,6 +442,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof IntegrationsRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/import-export': {
+      id: '/import-export'
+      path: '/import-export'
+      fullPath: '/import-export'
+      preLoaderRoute: typeof ImportExportRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doctor': {
       id: '/doctor'
       path: '/doctor'
@@ -504,6 +524,7 @@ const rootRouteChildren: RootRouteChildren = {
   BillingRoute: BillingRoute,
   BookRoute: BookRoute,
   DoctorRoute: DoctorRoute,
+  ImportExportRoute: ImportExportRoute,
   IntegrationsRoute: IntegrationsRoute,
   LoginRoute: LoginRoute,
   NotificationsRoute: NotificationsRoute,
