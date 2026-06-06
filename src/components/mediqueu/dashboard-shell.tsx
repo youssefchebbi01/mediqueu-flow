@@ -4,7 +4,7 @@ import {
   LayoutDashboard, CalendarPlus, ListOrdered, Settings, BarChart3,
   Bell, Search, Moon, Sun, LogOut, Menu, X,
   ShieldCheck, Building2, ScrollText, CreditCard, KeyRound, FileText,
-  Plug, Webhook, Upload, Palette,
+  Plug, Webhook, Upload, Palette, Rocket, LifeBuoy,
 } from "lucide-react";
 import { Logo } from "./logo";
 import { Button } from "@/components/ui/button";
@@ -21,6 +21,7 @@ import { CommandPalette } from "./command-palette";
 import { RouteProgress } from "./route-progress";
 import { OrgSwitcher } from "./org-switcher";
 import { TrialBanner } from "./trial-banner";
+import { FeedbackWidget } from "./feedback-widget";
 
 type Notif = Tables<"notifications">;
 
@@ -46,6 +47,7 @@ const navByRole: Record<string, NavItem[]> = {
   ],
   admin: [
     { to: "/admin", label: "Overview", icon: LayoutDashboard },
+    { to: "/getting-started", label: "Getting started", icon: Rocket },
     { to: "/analytics", label: "Analytics", icon: BarChart3 },
     { to: "/reports", label: "Reports", icon: FileText },
     { to: "/queue", label: "Queue Monitor", icon: ListOrdered },
@@ -61,6 +63,7 @@ const navByRole: Record<string, NavItem[]> = {
     { to: "/audit", label: "Audit log", icon: ScrollText },
     { to: "/notifications", label: "Notifications", icon: Bell },
     { to: "/security", label: "Security", icon: KeyRound },
+    { to: "/help", label: "Help center", icon: LifeBuoy },
     { to: "/settings", label: "Clinic Settings", icon: Settings },
   ],
 };
@@ -258,6 +261,7 @@ export function DashboardShell({ children, title, subtitle }: { children: ReactN
       {open && <div className="fixed inset-0 z-30 bg-foreground/20 lg:hidden" onClick={() => setOpen(false)} />}
 
       <CommandPalette open={paletteOpen} onOpenChange={setPaletteOpen} onToggleTheme={toggleTheme} />
+      <FeedbackWidget />
     </div>
   );
 }

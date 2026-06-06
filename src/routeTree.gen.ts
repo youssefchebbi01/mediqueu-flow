@@ -13,9 +13,11 @@ import { Route as WebhooksRouteImport } from './routes/webhooks'
 import { Route as TeamRouteImport } from './routes/team'
 import { Route as SettingsRouteImport } from './routes/settings'
 import { Route as SecurityRouteImport } from './routes/security'
+import { Route as RoiRouteImport } from './routes/roi'
 import { Route as ReportsRouteImport } from './routes/reports'
 import { Route as ReceptionRouteImport } from './routes/reception'
 import { Route as QueueRouteImport } from './routes/queue'
+import { Route as PricingRouteImport } from './routes/pricing'
 import { Route as PermissionsRouteImport } from './routes/permissions'
 import { Route as PatientRouteImport } from './routes/patient'
 import { Route as OrganizationRouteImport } from './routes/organization'
@@ -24,7 +26,11 @@ import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as IntegrationsRouteImport } from './routes/integrations'
 import { Route as ImportExportRouteImport } from './routes/import-export'
+import { Route as HelpRouteImport } from './routes/help'
+import { Route as GettingStartedRouteImport } from './routes/getting-started'
 import { Route as DoctorRouteImport } from './routes/doctor'
+import { Route as DemoRouteImport } from './routes/demo'
+import { Route as ContactSalesRouteImport } from './routes/contact-sales'
 import { Route as BrandingRouteImport } from './routes/branding'
 import { Route as BookRouteImport } from './routes/book'
 import { Route as BillingRouteImport } from './routes/billing'
@@ -55,6 +61,11 @@ const SecurityRoute = SecurityRouteImport.update({
   path: '/security',
   getParentRoute: () => rootRouteImport,
 } as any)
+const RoiRoute = RoiRouteImport.update({
+  id: '/roi',
+  path: '/roi',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const ReportsRoute = ReportsRouteImport.update({
   id: '/reports',
   path: '/reports',
@@ -68,6 +79,11 @@ const ReceptionRoute = ReceptionRouteImport.update({
 const QueueRoute = QueueRouteImport.update({
   id: '/queue',
   path: '/queue',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const PricingRoute = PricingRouteImport.update({
+  id: '/pricing',
+  path: '/pricing',
   getParentRoute: () => rootRouteImport,
 } as any)
 const PermissionsRoute = PermissionsRouteImport.update({
@@ -110,9 +126,29 @@ const ImportExportRoute = ImportExportRouteImport.update({
   path: '/import-export',
   getParentRoute: () => rootRouteImport,
 } as any)
+const HelpRoute = HelpRouteImport.update({
+  id: '/help',
+  path: '/help',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const GettingStartedRoute = GettingStartedRouteImport.update({
+  id: '/getting-started',
+  path: '/getting-started',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const DoctorRoute = DoctorRouteImport.update({
   id: '/doctor',
   path: '/doctor',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const DemoRoute = DemoRouteImport.update({
+  id: '/demo',
+  path: '/demo',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ContactSalesRoute = ContactSalesRouteImport.update({
+  id: '/contact-sales',
+  path: '/contact-sales',
   getParentRoute: () => rootRouteImport,
 } as any)
 const BrandingRoute = BrandingRouteImport.update({
@@ -170,7 +206,11 @@ export interface FileRoutesByFullPath {
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/branding': typeof BrandingRoute
+  '/contact-sales': typeof ContactSalesRoute
+  '/demo': typeof DemoRoute
   '/doctor': typeof DoctorRoute
+  '/getting-started': typeof GettingStartedRoute
+  '/help': typeof HelpRoute
   '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
@@ -179,9 +219,11 @@ export interface FileRoutesByFullPath {
   '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
   '/permissions': typeof PermissionsRoute
+  '/pricing': typeof PricingRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/reports': typeof ReportsRoute
+  '/roi': typeof RoiRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -197,7 +239,11 @@ export interface FileRoutesByTo {
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/branding': typeof BrandingRoute
+  '/contact-sales': typeof ContactSalesRoute
+  '/demo': typeof DemoRoute
   '/doctor': typeof DoctorRoute
+  '/getting-started': typeof GettingStartedRoute
+  '/help': typeof HelpRoute
   '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
@@ -206,9 +252,11 @@ export interface FileRoutesByTo {
   '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
   '/permissions': typeof PermissionsRoute
+  '/pricing': typeof PricingRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/reports': typeof ReportsRoute
+  '/roi': typeof RoiRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -225,7 +273,11 @@ export interface FileRoutesById {
   '/billing': typeof BillingRoute
   '/book': typeof BookRoute
   '/branding': typeof BrandingRoute
+  '/contact-sales': typeof ContactSalesRoute
+  '/demo': typeof DemoRoute
   '/doctor': typeof DoctorRoute
+  '/getting-started': typeof GettingStartedRoute
+  '/help': typeof HelpRoute
   '/import-export': typeof ImportExportRoute
   '/integrations': typeof IntegrationsRoute
   '/login': typeof LoginRoute
@@ -234,9 +286,11 @@ export interface FileRoutesById {
   '/organization': typeof OrganizationRoute
   '/patient': typeof PatientRoute
   '/permissions': typeof PermissionsRoute
+  '/pricing': typeof PricingRoute
   '/queue': typeof QueueRoute
   '/reception': typeof ReceptionRoute
   '/reports': typeof ReportsRoute
+  '/roi': typeof RoiRoute
   '/security': typeof SecurityRoute
   '/settings': typeof SettingsRoute
   '/team': typeof TeamRoute
@@ -254,7 +308,11 @@ export interface FileRouteTypes {
     | '/billing'
     | '/book'
     | '/branding'
+    | '/contact-sales'
+    | '/demo'
     | '/doctor'
+    | '/getting-started'
+    | '/help'
     | '/import-export'
     | '/integrations'
     | '/login'
@@ -263,9 +321,11 @@ export interface FileRouteTypes {
     | '/organization'
     | '/patient'
     | '/permissions'
+    | '/pricing'
     | '/queue'
     | '/reception'
     | '/reports'
+    | '/roi'
     | '/security'
     | '/settings'
     | '/team'
@@ -281,7 +341,11 @@ export interface FileRouteTypes {
     | '/billing'
     | '/book'
     | '/branding'
+    | '/contact-sales'
+    | '/demo'
     | '/doctor'
+    | '/getting-started'
+    | '/help'
     | '/import-export'
     | '/integrations'
     | '/login'
@@ -290,9 +354,11 @@ export interface FileRouteTypes {
     | '/organization'
     | '/patient'
     | '/permissions'
+    | '/pricing'
     | '/queue'
     | '/reception'
     | '/reports'
+    | '/roi'
     | '/security'
     | '/settings'
     | '/team'
@@ -308,7 +374,11 @@ export interface FileRouteTypes {
     | '/billing'
     | '/book'
     | '/branding'
+    | '/contact-sales'
+    | '/demo'
     | '/doctor'
+    | '/getting-started'
+    | '/help'
     | '/import-export'
     | '/integrations'
     | '/login'
@@ -317,9 +387,11 @@ export interface FileRouteTypes {
     | '/organization'
     | '/patient'
     | '/permissions'
+    | '/pricing'
     | '/queue'
     | '/reception'
     | '/reports'
+    | '/roi'
     | '/security'
     | '/settings'
     | '/team'
@@ -336,7 +408,11 @@ export interface RootRouteChildren {
   BillingRoute: typeof BillingRoute
   BookRoute: typeof BookRoute
   BrandingRoute: typeof BrandingRoute
+  ContactSalesRoute: typeof ContactSalesRoute
+  DemoRoute: typeof DemoRoute
   DoctorRoute: typeof DoctorRoute
+  GettingStartedRoute: typeof GettingStartedRoute
+  HelpRoute: typeof HelpRoute
   ImportExportRoute: typeof ImportExportRoute
   IntegrationsRoute: typeof IntegrationsRoute
   LoginRoute: typeof LoginRoute
@@ -345,9 +421,11 @@ export interface RootRouteChildren {
   OrganizationRoute: typeof OrganizationRoute
   PatientRoute: typeof PatientRoute
   PermissionsRoute: typeof PermissionsRoute
+  PricingRoute: typeof PricingRoute
   QueueRoute: typeof QueueRoute
   ReceptionRoute: typeof ReceptionRoute
   ReportsRoute: typeof ReportsRoute
+  RoiRoute: typeof RoiRoute
   SecurityRoute: typeof SecurityRoute
   SettingsRoute: typeof SettingsRoute
   TeamRoute: typeof TeamRoute
@@ -385,6 +463,13 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof SecurityRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/roi': {
+      id: '/roi'
+      path: '/roi'
+      fullPath: '/roi'
+      preLoaderRoute: typeof RoiRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/reports': {
       id: '/reports'
       path: '/reports'
@@ -404,6 +489,13 @@ declare module '@tanstack/react-router' {
       path: '/queue'
       fullPath: '/queue'
       preLoaderRoute: typeof QueueRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/pricing': {
+      id: '/pricing'
+      path: '/pricing'
+      fullPath: '/pricing'
+      preLoaderRoute: typeof PricingRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/permissions': {
@@ -462,11 +554,39 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof ImportExportRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/help': {
+      id: '/help'
+      path: '/help'
+      fullPath: '/help'
+      preLoaderRoute: typeof HelpRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/getting-started': {
+      id: '/getting-started'
+      path: '/getting-started'
+      fullPath: '/getting-started'
+      preLoaderRoute: typeof GettingStartedRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/doctor': {
       id: '/doctor'
       path: '/doctor'
       fullPath: '/doctor'
       preLoaderRoute: typeof DoctorRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/demo': {
+      id: '/demo'
+      path: '/demo'
+      fullPath: '/demo'
+      preLoaderRoute: typeof DemoRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/contact-sales': {
+      id: '/contact-sales'
+      path: '/contact-sales'
+      fullPath: '/contact-sales'
+      preLoaderRoute: typeof ContactSalesRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/branding': {
@@ -544,7 +664,11 @@ const rootRouteChildren: RootRouteChildren = {
   BillingRoute: BillingRoute,
   BookRoute: BookRoute,
   BrandingRoute: BrandingRoute,
+  ContactSalesRoute: ContactSalesRoute,
+  DemoRoute: DemoRoute,
   DoctorRoute: DoctorRoute,
+  GettingStartedRoute: GettingStartedRoute,
+  HelpRoute: HelpRoute,
   ImportExportRoute: ImportExportRoute,
   IntegrationsRoute: IntegrationsRoute,
   LoginRoute: LoginRoute,
@@ -553,9 +677,11 @@ const rootRouteChildren: RootRouteChildren = {
   OrganizationRoute: OrganizationRoute,
   PatientRoute: PatientRoute,
   PermissionsRoute: PermissionsRoute,
+  PricingRoute: PricingRoute,
   QueueRoute: QueueRoute,
   ReceptionRoute: ReceptionRoute,
   ReportsRoute: ReportsRoute,
+  RoiRoute: RoiRoute,
   SecurityRoute: SecurityRoute,
   SettingsRoute: SettingsRoute,
   TeamRoute: TeamRoute,
