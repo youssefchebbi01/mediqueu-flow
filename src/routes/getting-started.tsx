@@ -31,7 +31,7 @@ function GettingStarted() {
     (async () => {
       const [members, doctors, appts] = await Promise.all([
         supabase.from("organization_members").select("id", { count: "exact", head: true }).eq("org_id", org.id),
-        supabase.from("doctors_directory").select("id", { count: "exact", head: true }).eq("organization_id", org.id),
+        supabase.from("doctors_directory").select("id", { count: "exact", head: true }).eq("clinic_id", profile?.clinic_id ?? ""),
         supabase.from("appointments").select("id", { count: "exact", head: true }).eq("organization_id", org.id),
       ]);
       setDone({
