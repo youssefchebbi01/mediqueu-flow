@@ -76,11 +76,15 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { title: "MediQueu — Smart Clinic Queue & Appointment Platform" },
       { name: "description", content: "Reduce waiting times, simplify scheduling, and improve patient satisfaction with smart digital queue management." },
       { name: "author", content: "MediQueu" },
-      { property: "og:title", content: "MediQueu" },
-      { property: "og:description", content: "Smart clinic queue + appointments." },
+      { property: "og:title", content: "MediQueu — Smart Clinic Queue & Appointment Platform" },
+      { property: "og:description", content: "Reduce waiting times, simplify scheduling, and improve patient satisfaction with smart digital queue management." },
       { property: "og:type", content: "website" },
       { name: "twitter:card", content: "summary" },
       { name: "twitter:site", content: "@MediQueu" },
+      { name: "twitter:title", content: "MediQueu — Smart Clinic Queue & Appointment Platform" },
+      { name: "twitter:description", content: "Reduce waiting times, simplify scheduling, and improve patient satisfaction with smart digital queue management." },
+      { property: "og:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a76fce06-d7f3-40e5-9b95-ddba2ef9d988/id-preview-fae863e8--3ae5d7ca-4fb2-4ac4-bf94-be5c0674503a.lovable.app-1780706668510.png" },
+      { name: "twitter:image", content: "https://pub-bb2e103a32db4e198524a2e9ed8f35b4.r2.dev/a76fce06-d7f3-40e5-9b95-ddba2ef9d988/id-preview-fae863e8--3ae5d7ca-4fb2-4ac4-bf94-be5c0674503a.lovable.app-1780706668510.png" },
     ],
     links: [
       {
