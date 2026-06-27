@@ -29,7 +29,6 @@ type Appt = Tables<"appointments">;
 
 function Admin() {
   const __ok = useRequireRole(["admin"]);
-  if (!__ok) return null;
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [specialties, setSpecialties] = useState<Specialty[]>([]);
   const [docOpen, setDocOpen] = useState(false);
@@ -47,6 +46,8 @@ function Admin() {
     setDoctors(d ?? []); setSpecialties(s ?? []);
   };
   useEffect(() => { refresh(); }, []);
+
+  if (!__ok) return null;          // ← moved to AFTER all hooks
 
   const addDoctor = async () => {
     if (!docName || !docSpec) return toast.error("Name and specialty required");
