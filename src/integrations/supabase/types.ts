@@ -358,6 +358,36 @@ export type Database = {
           },
         ]
       }
+      demo_requests: {
+        Row: {
+          clinic_name: string
+          created_at: string
+          email: string
+          id: string
+          message: string | null
+          name: string
+          phone: string | null
+        }
+        Insert: {
+          clinic_name: string
+          created_at?: string
+          email: string
+          id?: string
+          message?: string | null
+          name: string
+          phone?: string | null
+        }
+        Update: {
+          clinic_name?: string
+          created_at?: string
+          email?: string
+          id?: string
+          message?: string | null
+          name?: string
+          phone?: string | null
+        }
+        Relationships: []
+      }
       doctors_directory: {
         Row: {
           available: boolean | null
