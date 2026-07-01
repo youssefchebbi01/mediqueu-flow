@@ -45,7 +45,7 @@ const PRESETS: { key: PresetKey; label: string }[] = [
 
 function Analytics() {
   const __ok = useRequireRole(["admin", "doctor"]);
-  if (!__ok) return null;
+  
   const { org } = useCurrentOrg();
   const [preset, setPreset] = useState<PresetKey>("30d");
   const [loading, setLoading] = useState(true);
@@ -140,6 +140,8 @@ function Analytics() {
         rows: specMix.map((s) => [s.name, s.value]),
       },
     ]);
+
+  if (!__ok) return null;
 
   return (
     <DashboardShell title="Analytics" subtitle="Operational intelligence for your clinic.">

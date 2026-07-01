@@ -23,7 +23,7 @@ export const Route = createFileRoute("/doctor")({
 
 function Doctor() {
   const __ok = useRequireRole(["doctor", "admin"]);
-  if (!__ok) return null;
+  
   const { user, profile } = useAuth();
   const [paused, setPaused] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState("");
@@ -99,6 +99,8 @@ function Doctor() {
     }
     toast(newPaused ? "Availability paused" : "Availability resumed");
   };
+
+  if (!__ok) return null;
 
   return (
     <DashboardShell title={profile?.full_name ?? "Doctor"} subtitle={`${profile?.specialty ?? "Clinician"} · today's clinic`}>

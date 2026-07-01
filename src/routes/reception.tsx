@@ -29,7 +29,7 @@ export const Route = createFileRoute("/reception")({
 
 function Reception() {
   const __ok = useRequireRole(["receptionist", "admin"]);
-  if (!__ok) return null;
+  
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [patients, setPatients] = useState<Profile[]>([]);
   const [walkInOpen, setWalkInOpen] = useState(false);
@@ -210,6 +210,8 @@ function Reception() {
     { id: "status", header: "Status", sortable: true, accessor: (a) => a.status,
       cell: (a) => <StatusBadge status={a.status} /> },
   ];
+
+  if (!__ok) return null;
 
   return (
     <DashboardShell title="Front Desk" subtitle={`${new Date().toLocaleDateString([], { weekday: "long" })} · live clinic flow.`}>
