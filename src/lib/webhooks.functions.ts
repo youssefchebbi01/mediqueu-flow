@@ -20,6 +20,59 @@ async function hmacSha256Hex(secret: string, body: string): Promise<string> {
 }
 
 /**
+ * Reject webhook target URLs that would let an admin pivot the server into
+ * the internal network (SSRF): non-http(s) schemes, loopback, link-local,
+ * RFC1918 private ranges, and cloud metadata endpoints.
+ */
+function assertSafeWebhookUrl(raw: string): void {
+  let u: URL;
+  try {
+    u = new URL(raw);
+  } catch {
+    throw new Response("Invalid webhook URL", { status: 400 });
+  }
+  if (u.protocol !== "https:" && u.protocol !== "http:") {
+    throw new Response("Webhook URL must use http(s)", { status: 400 });
+  }
+  const host = u.hostname.toLowerCase();
+  if (
+    host === "localhost" ||
+    host === "0.0.0.0" ||
+    host === "::1" ||
+    host === "[::1]" ||
+    host.endsWith(".localhost") ||
+    host.endsWith(".internal") ||
+    host.endsWith(".local")
+  ) {
+    throw new Response("Webhook URL host is not allowed", { status: 400 });
+  }
+  // IPv4 literal checks: block loopback, private ranges, link-local, and
+  // cloud metadata (169.254.169.254).
+  const m = host.match(/^(\d{1,3})\.(\d{1,3})\.(\d{1,3})\.(\d{1,3})$/);
+  if (m) {
+    const [a, b, c] = [Number(m[1]), Number(m[2]), Number(m[3])];
+    if (
+      a === 10 ||
+      a === 127 ||
+      a === 0 ||
+      (a === 169 && b === 254) ||
+      (a === 172 && b >= 16 && b <= 31) ||
+      (a === 192 && b === 168) ||
+      (a === 100 && b >= 64 && b <= 127) ||
+      a >= 224 // multicast / reserved
+    ) {
+      throw new Response("Webhook URL host is not allowed", { status: 400 });
+      void c;
+    }
+  }
+  // Bracketed IPv6 literal — block any literal to be safe (public IPv6
+  // destinations should be reached via hostname).
+  if (host.startsWith("[") && host.endsWith("]")) {
+    throw new Response("Webhook URL host is not allowed", { status: 400 });
+  }
+}
+
+/**
  * Dispatches a webhook delivery and records the attempt. Used both for the
  * "Send test event" button and as the canonical dispatcher to call from other
  * server functions when domain events occur.
@@ -36,6 +89,8 @@ export const dispatchWebhook = createServerFn({ method: "POST" })
       .maybeSingle();
     if (error || !hook) throw new Response("Webhook not found", { status: 404 });
     if (!(hook as any).active) throw new Response("Webhook disabled", { status: 400 });
+
+    assertSafeWebhookUrl((hook as any).target_url as string);
 
     const body = JSON.stringify({
       event: data.event,
