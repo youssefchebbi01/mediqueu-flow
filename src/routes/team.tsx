@@ -31,7 +31,7 @@ const ROLE_STYLES: Record<string, string> = {
 
 function TeamPage() {
   const __ok = useRequireRole(["admin"]);
-  if (!__ok) return null;
+  
   const { role: myRole, loading } = useAuth();
   const list = useServerFn(listTeam);
   const assign = useServerFn(assignRole);

@@ -23,7 +23,7 @@ export const Route = createFileRoute("/doctor")({
 
 function Doctor() {
   const __ok = useRequireRole(["doctor", "admin"]);
-  if (!__ok) return null;
+  
   const { user, profile } = useAuth();
   const [paused, setPaused] = useState(false);
   const [chiefComplaint, setChiefComplaint] = useState("");

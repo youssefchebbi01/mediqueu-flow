@@ -29,7 +29,7 @@ export const Route = createFileRoute("/reception")({
 
 function Reception() {
   const __ok = useRequireRole(["receptionist", "admin"]);
-  if (!__ok) return null;
+  
   const [doctors, setDoctors] = useState<Doctor[]>([]);
   const [patients, setPatients] = useState<Profile[]>([]);
   const [walkInOpen, setWalkInOpen] = useState(false);
