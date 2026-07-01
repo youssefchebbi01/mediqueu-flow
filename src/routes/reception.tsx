@@ -211,6 +211,8 @@ function Reception() {
       cell: (a) => <StatusBadge status={a.status} /> },
   ];
 
+  if (!__ok) return null;
+
   return (
     <DashboardShell title="Front Desk" subtitle={`${new Date().toLocaleDateString([], { weekday: "long" })} · live clinic flow.`}>
       <div className="grid gap-3 sm:gap-4 grid-cols-2 lg:grid-cols-4">

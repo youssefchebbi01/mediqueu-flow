@@ -141,6 +141,8 @@ function Analytics() {
       },
     ]);
 
+  if (!__ok) return null;
+
   return (
     <DashboardShell title="Analytics" subtitle="Operational intelligence for your clinic.">
       {/* Toolbar */}

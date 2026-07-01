@@ -98,6 +98,8 @@ function TeamPage() {
     );
   });
 
+  if (!__ok) return null;
+
   return (
     <DashboardShell title="Team Management" subtitle="Assign roles and send SMS notifications.">
       <div className="grid gap-6 lg:grid-cols-3">
